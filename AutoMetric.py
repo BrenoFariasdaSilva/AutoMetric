@@ -183,20 +183,25 @@ def process_repository(repo_url, githubToken=verify_env_file()):
 
    return output
 
-def process_repositories(repo_urls, githubToken=verify_env_file()):
+def process_repository(repo_url, githubToken):
    """
-   Process a list of repository URLs.
-   :param repo_urls: list - List of repository URLs.
-   :param githubToken: str - GitHub token.
-   :return: list - List of repository metrics.
+   Determines the repository hosting service (GitHub or GitLab) and processes the repository accordingly.
+   
+   :param repo_url: Full repository URL
+   :param githubToken: GitHub token for API access
+   :return: Dictionary containing processed repository metadata
    """
 
-   output = []
-   for repo_url in repo_urls:
-      repo_data = process_repository(repo_url, githubToken)
-      if repo_data:
-         output.append(repo_data)
-   return output
+   domain, org, project_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
+   print(f"Processing {domain}/{repo_path}...") # Output the processing message
+
+   if domain == "github.com": # If the domain is GitHub
+      return process_github_repo(repo_path, githubToken) # Process the GitHub repository
+   elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
+      return process_gitlab_repo(domain, repo_path) # Process the GitLab repository
+   else: # If the domain is not supported
+      print(f"Unsupported domain: {domain}") # Output the unsupported domain message
+      return None # Return None
 
 def write_output(output_data, file_path):
    """
@@ -227,7 +232,7 @@ def main(repo_urls=None):
       print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
       repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
 
-   githubToken = verify_env_file()
+   githubToken = verify_env_file() # Verify the .env file and get the GitHub token
 
    output = [] # Initialize the output list
    for repo_url in repo_urls: # Iterate over the repository URLs
@@ -238,7 +243,6 @@ def main(repo_urls=None):
          output.append(repo_data) # Append the repository data to the output list
 
    write_output(output, OUTPUT_FILE) # Write the output to a file
-
    print(f"\nProgram finished.") # Output the end of the program message
 
 if __name__ == "__main__":
