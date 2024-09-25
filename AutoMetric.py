@@ -1,15 +1,45 @@
-from urllib import parse
-import json
-from github import Github
-import gitlab
-from datetime import datetime
-import argparse
+import argparse # Import the argparse module
+import gitlab # Import the gitlab module
+import json # Import the json module
+import os # Import the os module
+import sys # Import the sys module
+from datetime import datetime # Import the datetime class from the datetime module
+from dotenv import load_dotenv # For loading environment variables from .env file
+from github import Github # Import the Github class from the github package
+from urllib import parse # Import the parse module from the urllib package
 
 # Global variables
 INPUT_FILE = "input.txt" # The input file with repository URLs
 OUTPUT_FILE = "output.json" # The output file with repository metadata
 
-def process_repository(prj_repo, githubToken=''):
+# .Env Constants:
+ENV_PATH = "./.env" # The path to the .env file
+ENV_VARIABLE = "GITHUB_TOKEN" # The environment variable to load
+
+def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
+   """
+   Verify if the .env file exists and if the desired key is present.
+
+   :param env_path: Path to the .env file.
+   :param key: The key to get in the .env file.
+   :return: The value of the key if it exists.
+   """
+
+   # Verify if the .env file exists
+   if not os.path.exists(env_path):
+      print(f"The {env_path} file does not exist.") # Print an error message
+      sys.exit(1) # Exit the program
+
+   load_dotenv(env_path) # Load the .env file
+   api_key = os.getenv(key) # Get the value of the key
+
+   if not api_key: # If the key does not exist
+      print(f"The {key} key does not exist in the {env_path} file.") # Print an error message
+      sys.exit(1) # Exit the program
+
+   return api_key # Return the value of the key
+
+def process_repository(prj_repo, githubToken=verify_env_file()):
    """
    Function to process a single repository and extract its metrics.
    :param prj_repo: str - The repository URL.
@@ -131,7 +161,7 @@ def process_repository(prj_repo, githubToken=''):
 
    return output
 
-def process_repositories(repo_urls, githubToken=''):
+def process_repositories(repo_urls, githubToken=verify_env_file()):
    """
    Process a list of repository URLs.
    :param repo_urls: list - List of repository URLs.
@@ -146,11 +176,11 @@ def process_repositories(repo_urls, githubToken=''):
          output.append(repo_data)
    return output
 
-def main(repo_urls=None, githubToken=''):
+def main(repo_urls=None):
    """
    Main function.
-   :param repo_urls: list - List of repository URLs.
-   :param githubToken: str - GitHub token.
+
+   :param repo_urls: list - Optional list of repository URLs passed as arguments.
    :return: None
    """
 
@@ -158,6 +188,8 @@ def main(repo_urls=None, githubToken=''):
       # Fallback to reading from the input file if no URLs are provided
       with open(INPUT_FILE, 'r') as f:
          repo_urls = [line.strip() for line in f if line.strip()]
+
+   githubToken = githubToken or verify_env_file()
 
    # Process the repositories and get the output
    output = process_repositories(repo_urls, githubToken)
@@ -169,19 +201,18 @@ def main(repo_urls=None, githubToken=''):
    print(f"Output written to {OUTPUT_FILE}")
 
 if __name__ == "__main__":
-   # Argument parser to handle command-line inputs
-   parser = argparse.ArgumentParser(description="Process repository URLs for metrics extraction")
-   parser.add_argument(
-      'repo_urls', nargs='*', help="List of repository URLs to process", default=None
-   )
-   parser.add_argument(
-      '--githubToken', help="GitHub token for authentication", default=''
-   )
+   """
+   This is the standard boilerplate that calls the main() function.
 
-   args = parser.parse_args()
+   :return: None
+   """
 
-   # If repository URLs are passed as arguments, use them. Otherwise, fallback to input file.
-   if args.repo_urls:
-      main(repo_urls=args.repo_urls, githubToken=args.githubToken)
-   else:
-      main(githubToken=args.githubToken)
+   parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics")
+   parser.add_argument("repo_urls", nargs="*", help="List of repository URLs to process", default=None)
+
+   args = parser.parse_args() # Parse arguments
+
+   if args.repo_urls: # If repository URLs are provided as arguments
+      main(args.repo_urls) # Pass the list of repo URLs to main
+   else: # If no arguments
+      main() # Run without arguments, fall back to input file processing
