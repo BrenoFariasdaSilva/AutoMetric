@@ -126,6 +126,47 @@ def process_github_repository(repo_path, githubToken):
       print(f"Error processing GitHub repository {repo_path}: {e}") # Output the error message
       return None # Return None
 
+def process_gitlab_repository(domain, repo_path):
+   """
+   Processes a GitLab repository to extract its metadata.
+   
+   :param domain: The GitLab domain (e.g., gitlab.com)
+   :param repo_path: The repository path (org/repo)
+   :return: Dictionary with repository metadata
+   """
+
+   try: # Try to process the GitLab repository
+      gitlab_instance = gitlab.Gitlab(f"https://{domain}") # Create a GitLab instance
+      project = gitlab_instance.projects.get(repo_path) # Get the GitLab project
+      default_branch = next((branch for branch in project.branches.list() if branch.default), None) # Get the default branch
+
+      if not default_branch: # If the default branch is not found
+         return None # Return None
+
+      # Number of contributors (NC)
+      nc = len(project.repository_contributors(get_all=True))
+
+      # Branch protection (BP)
+      branch_protection = default_branch.protected
+
+      # Inactive Period (IP)
+      now = datetime.now() # Get the current date and time
+      latest_commit_date = datetime.strptime( # Get the latest commit date
+         default_branch.commit["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z"
+      ).replace(tzinfo=None)
+      ip = (now - latest_commit_date).days # Calculate the inactive period
+
+      return {
+         "Number of Contributors": nc, # Return the number of contributors
+         "MTTU": "n/a", # GitLab doesn't support releases as in GitHub
+         "MTTC": "n/a", # GitLab doesn't directly provide this info
+         "Branch Protection": branch_protection, # Return the branch protection status
+         "Inactive Period": ip # Return the inactive period
+      }
+   except Exception as e: # If an exception occurs
+      print(f"Error processing GitLab repository {repo_path}: {e}") # Output the error message
+      return None # Return None
+
 def process_repository(repo_url, githubToken):
    """
    Determines the repository hosting service (GitHub or GitLab) and processes the repository accordingly.
@@ -141,7 +182,7 @@ def process_repository(repo_url, githubToken):
    if domain == "github.com": # If the domain is GitHub
       return process_github_repository(repo_path, githubToken) # Process the GitHub repository
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
-      return process_gitlab_repo(domain, repo_path) # Process the GitLab repository
+      return process_gitlab_repository(domain, repo_path) # Process the GitLab repository
    else: # If the domain is not supported
       print(f"Unsupported domain: {domain}") # Output the unsupported domain message
       return None # Return None
