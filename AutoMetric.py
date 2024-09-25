@@ -208,10 +208,10 @@ def main(repo_urls=None):
 
    print(f"Welcome to the AutoMetric program!") # Output the welcome message
 
-   if repo_urls:
-      print(f"Processing the provided list of repositories...")
+   if repo_urls: # If repository URLs are provided as arguments
+      print(f"Processing the provided list of repositories as arguments and writing output to {OUTPUT_FILE}.")
       print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
-   else:
+   else: # If no arguments are provided, read from the input file
       print(f"Processing repositories from the input file {INPUT_FILE} and writing output to {OUTPUT_FILE}.")
       print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
       repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
@@ -236,8 +236,8 @@ if __name__ == "__main__":
    :return: None
    """
 
-   parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics")
-   parser.add_argument("repo_urls", nargs="*", help="List of repository URLs to process", default=None)
+   parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics") # Create an argument parser
+   parser.add_argument("repo_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an argument for repository URLs
 
    args = parser.parse_args() # Parse arguments
 
