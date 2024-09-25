@@ -65,123 +65,66 @@ def parse_repository_url(repo_url):
    project_name = repo_path.split("/")[-1] # Get the project name
    return domain, org_name, project_name, repo_path # Return the domain, organization, project name, and repository path
 
-def process_repository(repo_url, githubToken=verify_env_file()):
+def process_github_repository(repo_path, githubToken):
    """
-   Function to process a single repository and extract its metrics.
-   :param repo_url: str - The repository URL.
-   :param githubToken: str - The GitHub token.
-   :return: dict - The repository metrics.
+   Processes a GitHub repository to extract its metadata.
+   
+   :param repo_path: GitHub repository path (org/repo)
+   :param githubToken: GitHub token for API access
+   :return: Dictionary with repository metadata
    """
 
-   output = {}
-   domain, org, project_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
+   github = Github(githubToken) # Create a GitHub instance
+   try: # Try to process the GitHub repository
+      repo = github.get_repo(repo_path) # Get the GitHub repository
+      now = datetime.now() # Get the current date and time
 
-   parse_url = parse.quote(repo_url, safe="")
+      # Number of contributors (NC)
+      contributors = repo.get_contributors() # Get the contributors
+      nc = contributors.totalCount # Get the total number of contributors
 
-   now = datetime.now()
+      # Mean Time to Update (MTTU)
+      releases = repo.get_releases() # Get the releases
+      if releases.totalCount > 0: # If there are releases
+         first_release = releases.get_page(releases.totalCount // 30)[-1] # Get the first release
+         days_since_first_release = (now - first_release.created_at).days # Calculate the days since the first release
+         mttu = days_since_first_release / releases.totalCount # Calculate the mean time to update
+      else: # If there are no releases
+         mttu = "n/a" # Set the mean time to update to "n/a"
 
-   if domain == "github.com":
-      g = Github(githubToken)
+      # Mean Time to Commit (MTTC)
+      commits = repo.get_commits() # Get the commits
+      if commits.totalCount > 0: # If there are commits
+         first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
+         days_since_first_commit = (now - first_commit.commit.author.date).days # Calculate the days since the first commit
+         mttc = days_since_first_commit / commits.totalCount # Calculate the mean time to commit
+      else: # If there are no commits
+         mttc = "n/a" # Set the mean time to commit to "n/a"
 
-      try:
-         gitRepo = g.get_repo(repo_path)
+      # Branch protection (BP)
+      try: # Try to get the branch protection
+         default_branch = repo.get_branch(repo.default_branch) # Get the default branch
+         branch_protection = default_branch.protected # Get the branch protection status
+      except: # If an exception occurs
+         branch_protection = "n/a" # Set the branch protection status to "n/a"
 
-         # Get contributors
-         contributors = gitRepo.get_contributors()
+      # Inactive Period (IP)
+      try: # Try to get the inactive period
+         latest_commit_date = repo.get_branch(repo.default_branch).commit.commit.author.date # Get the latest commit date
+         ip = (now - latest_commit_date).days # Calculate the inactive period
+      except: # If an exception occurs
+         ip = "n/a" # Set the inactive period to "n/a"
 
-         # Mean Time to Update (MTTU)
-         try:
-            releases = gitRepo.get_releases()
-            if releases.totalCount == 0:
-               MU = "n/a"
-            else:
-               last_release_page_number = (releases.totalCount - 1) // 30
-               last_release_page = releases.get_page(last_release_page_number)
-               first_release = last_release_page[-1]
-               first_release_to_now = now - first_release.created_at
-               MU = first_release_to_now.days / releases.totalCount
-         except:
-               MU = "n/a"
-
-         # Mean Time to Commit (MTTC)
-         try:
-            commits = gitRepo.get_commits()
-            if commits.totalCount == 0:
-               MC = "n/a"
-            else:
-               last_commit_page_number = (commits.totalCount - 1) // 30
-               last_commit_page = commits.get_page(last_commit_page_number)
-               first_commit = last_commit_page[-1]
-               first_commit_to_now = now - first_commit.commit.author.date
-               MC = first_commit_to_now.days / commits.totalCount
-         except:
-            MC = "n/a"
-
-         # Number of Contributors (NC)
-         try:
-            NC = contributors.totalCount + 1  # +1 to count the owner
-         except:
-            NC = "n/a"
-
-         # Branch Protection (BP)
-         try:
-            default_branch = gitRepo.default_branch
-            branch = gitRepo.get_branch(default_branch)
-            BP = branch.protected
-         except:
-            BP = "n/a"
-
-         # Inactive Period (IP)
-         try:
-            commit = branch.commit
-            latestCommit = commit.commit.author.date
-            howLong = now - latestCommit
-            IP = howLong.days
-         except:
-            IP = "n/a"
-
-      except Exception as e:
-         print(f"Error processing GitHub repository: {e}")
-         return None
-
-   elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]:
-      try:
-         salsa = gitlab.Gitlab("https://" + domain)
-         project = salsa.projects.get(repo_path)
-
-         # Get default branch
-         branches = project.branches.list()
-         default_branch = next((branch for branch in branches if branch.default), None)
-         
-         # Number of Contributors (NC)
-         contributors = project.repository_contributors(get_all=True)
-         NC = len(contributors)
-
-         # Branch Protection (BP)
-         BP = default_branch.protected
-
-         # Inactive Period (IP)
-         commit_info = default_branch.commit
-         latestCommit = datetime.strptime(commit_info["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
-         howLong = now - latestCommit
-         IP = howLong.days
-
-      except Exception as e:
-         print(f"Error processing GitLab repository: {e}")
-         return None
-   else:
-      print(f"Unsupported domain: {domain}")
-      return None
-
-   # Store the metrics in a dictionary
-   output["name"] = project_name
-   output["Number of Contributors"] = str(NC)
-   output["Inactive Period"] = str(IP)
-   output["MTTU"] = str(MU)
-   output["MTTC"] = str(MC)
-   output["Branch Protection"] = BP
-
-   return output
+      return { # Return the repository metadata dictionary
+         "Number of Contributors": nc, # Return the number of contributors
+         "MTTU": mttu, # Return the mean time to update
+         "MTTC": mttc, # Return the mean time to commit
+         "Branch Protection": branch_protection, # Return the branch protection status
+         "Inactive Period": ip # Return the inactive period
+      }
+   except Exception as e: # If an exception occurs
+      print(f"Error processing GitHub repository {repo_path}: {e}") # Output the error message
+      return None # Return None
 
 def process_repository(repo_url, githubToken):
    """
@@ -196,7 +139,7 @@ def process_repository(repo_url, githubToken):
    print(f"Processing {domain}/{repo_path}...") # Output the processing message
 
    if domain == "github.com": # If the domain is GitHub
-      return process_github_repo(repo_path, githubToken) # Process the GitHub repository
+      return process_github_repository(repo_path, githubToken) # Process the GitHub repository
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
       return process_gitlab_repo(domain, repo_path) # Process the GitLab repository
    else: # If the domain is not supported
