@@ -50,22 +50,33 @@ def read_input_file(file_path):
    with open(file_path, "r") as file: # Open the input
       return [line.strip() for line in file if line.strip()] # Return the list of repository URLs
 
-def process_repository(prj_repo, githubToken=verify_env_file()):
+def parse_repository_url(repo_url):
+   """
+   Parses the repository URL to extract domain, organization, and project name.
+   
+   :param repo_url: The full repository URL
+   :return: Tuple containing (domain, organization, project name, repository path)
+   """
+
+   parsed_url = parse.urlparse(repo_url) # Parse the repository URL
+   repo_path = parsed_url.path[1:] # Remove leading slash
+   domain = parsed_url.netloc # Get the domain
+   org_name = repo_path.split("/")[-2] # Get the organization name
+   project_name = repo_path.split("/")[-1] # Get the project name
+   return domain, org_name, project_name, repo_path # Return the domain, organization, project name, and repository path
+
+def process_repository(repo_url, githubToken=verify_env_file()):
    """
    Function to process a single repository and extract its metrics.
-   :param prj_repo: str - The repository URL.
+   :param repo_url: str - The repository URL.
    :param githubToken: str - The GitHub token.
    :return: dict - The repository metrics.
    """
 
    output = {}
-   query = parse.urlparse(prj_repo)[2][1:]
-   print(f"Processing repository: {query}")
-   domain = parse.urlparse(prj_repo)[1]
-   prj_org = query.split("/")[-2]
-   prj_name = query.split("/")[-1]
+   domain, org, project_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
 
-   parse_url = parse.quote(prj_repo, safe="")
+   parse_url = parse.quote(repo_url, safe="")
 
    now = datetime.now()
 
@@ -73,7 +84,7 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
       g = Github(githubToken)
 
       try:
-         gitRepo = g.get_repo(query)
+         gitRepo = g.get_repo(repo_path)
 
          # Get contributors
          contributors = gitRepo.get_contributors()
@@ -136,7 +147,7 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]:
       try:
          salsa = gitlab.Gitlab("https://" + domain)
-         project = salsa.projects.get(query)
+         project = salsa.projects.get(repo_path)
 
          # Get default branch
          branches = project.branches.list()
