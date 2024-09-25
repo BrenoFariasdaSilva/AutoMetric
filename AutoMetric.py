@@ -39,6 +39,17 @@ def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
 
    return api_key # Return the value of the key
 
+def read_input_file(file_path):
+   """
+   Reads input from a file and returns a list of repository URLs.
+   
+   :param file_path: Path to the input file
+   :return: List of repository URLs
+   """
+
+   with open(file_path, "r") as file: # Open the input
+      return [line.strip() for line in file if line.strip()] # Return the list of repository URLs
+
 def process_repository(prj_repo, githubToken=verify_env_file()):
    """
    Function to process a single repository and extract its metrics.
@@ -192,8 +203,7 @@ def main(repo_urls=None):
    else:
       print(f"Processing repositories from the input file {INPUT_FILE} and writing output to {OUTPUT_FILE}.")
       print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
-      with open(INPUT_FILE, "r") as f:
-         repo_urls = [line.strip() for line in f if line.strip()]
+      repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
 
    githubToken = verify_env_file()
 
