@@ -3,130 +3,185 @@ import json
 from github import Github
 import gitlab
 from datetime import datetime
+import argparse
 
 # Global variables
 INPUT_FILE = "input.txt" # The input file with repository URLs
 OUTPUT_FILE = "output.json" # The output file with repository metadata
 
+def process_repository(prj_repo, githubToken=''):
+   """
+   Function to process a single repository and extract its metrics.
+   :param prj_repo: str - The repository URL.
+   :param githubToken: str - The GitHub token.
+   :return: dict - The repository metrics.
+   """
 
-f = open(INPUT_FILE, 'r')
-githubToken = ''
+   output = {}
+   query = parse.urlparse(prj_repo)[2][1:]
+   print(f"Processing repository: {query}")
+   domain = parse.urlparse(prj_repo)[1]
+   prj_org = query.split('/')[-2]
+   prj_name = query.split('/')[-1]
 
-output = []
+   parse_url = parse.quote(prj_repo, safe='')
 
-while True:
-    line = f.readline().strip()
-    if not line: break
+   now = datetime.now()
 
-    # set name and url of project
-    prj_repo = line
-    query = parse.urlparse(prj_repo)[2][1:]
-    print(query)
-    domain = parse.urlparse(prj_repo)[1]
-    prj_org = query.split('/')[-2]
-    prj_name = query.split('/')[-1]
+   if domain == 'github.com':
+      g = Github(githubToken)
 
-    parse_url = parse.quote(prj_repo, safe='')
+      try:
+         gitRepo = g.get_repo(query)
 
-    # if repository is GitHub repository
-    if domain == 'github.com':
-        # set github API token
-        g = Github(githubToken)
+         # Get contributors
+         contributors = gitRepo.get_contributors()
 
-        print(query)
-        gitRepo = g.get_repo(query)
-
-        # get contributor list of repositories
-        contributors = gitRepo.get_contributors()
-
-        now = datetime.now()
-
-        # get release list of repositories
-        try:
+         # Mean Time to Update (MTTU)
+         try:
             releases = gitRepo.get_releases()
             if releases.totalCount == 0:
-                MU = 'n/a'
+               MU = 'n/a'
             else:
-                last_release_page_number = (releases.totalCount - 1) // 30
-                last_release_page = releases.get_page(last_release_page_number)
-                first_release = last_release_page[-1]
-                first_release_to_now = now - first_release.created_at
-                MU = first_release_to_now.days / releases.totalCount    
-        except:
-            MU = 'n/a'   
+               last_release_page_number = (releases.totalCount - 1) // 30
+               last_release_page = releases.get_page(last_release_page_number)
+               first_release = last_release_page[-1]
+               first_release_to_now = now - first_release.created_at
+               MU = first_release_to_now.days / releases.totalCount
+         except:
+               MU = 'n/a'
 
-        # calculate MC
-        try:
+         # Mean Time to Commit (MTTC)
+         try:
             commits = gitRepo.get_commits()
             if commits.totalCount == 0:
-                MC = 'n/a'
+               MC = 'n/a'
             else:
-                last_commit_page_number = (commits.totalCount - 1) // 30
-                last_commit_page = commits.get_page(last_commit_page_number)
-                first_commit = last_commit_page[-1]
-                first_commit_to_now = now - first_commit.commit.author.date
-                MC = first_commit_to_now.days / commits.totalCount
-        except:
+               last_commit_page_number = (commits.totalCount - 1) // 30
+               last_commit_page = commits.get_page(last_commit_page_number)
+               first_commit = last_commit_page[-1]
+               first_commit_to_now = now - first_commit.commit.author.date
+               MC = first_commit_to_now.days / commits.totalCount
+         except:
             MC = 'n/a'
 
-        # calculate NC
-        contributors = gitRepo.get_contributors()
-        try:
-            NC = contributors.totalCount
-            NC +=1
-        except:
+         # Number of Contributors (NC)
+         try:
+            NC = contributors.totalCount + 1  # +1 to count the owner
+         except:
             NC = 'n/a'
 
-        # check BP
-        try:
+         # Branch Protection (BP)
+         try:
             default_branch = gitRepo.default_branch
             branch = gitRepo.get_branch(default_branch)
             BP = branch.protected
-        except:
+         except:
             BP = 'n/a'
 
-        # calculate IP
-        try:
+         # Inactive Period (IP)
+         try:
             commit = branch.commit
             latestCommit = commit.commit.author.date
             howLong = now - latestCommit
             IP = howLong.days
-        except:
+         except:
             IP = 'n/a'
 
-    # if repository is gitlab repository
-    elif domain == 'salsa.debian.org' or domain == 'gitlab.freedesktop.org':
-        # set gitlab repository
-        salsa = gitlab.Gitlab('https://' + domain)
+      except Exception as e:
+         print(f"Error processing GitHub repository: {e}")
+         return None
 
-        project = salsa.projects.get(query)
+   elif domain in ['salsa.debian.org', 'gitlab.freedesktop.org']:
+      try:
+         salsa = gitlab.Gitlab('https://' + domain)
+         project = salsa.projects.get(query)
 
-        # set branch
-        branches = project.branches.list()
-        for branch in branches:
-            jsonbranch = json.loads(branch.to_json())
-            if jsonbranch['default'] == True:
-                default_branch = jsonbranch
-        
-        # calculate NC
-        contributors = project.repository_contributors(get_all=True)
-        BP = len(contributors)
+         # Get default branch
+         branches = project.branches.list()
+         default_branch = next((branch for branch in branches if branch.default), None)
+         
+         # Number of Contributors (NC)
+         contributors = project.repository_contributors(get_all=True)
+         NC = len(contributors)
 
-        # check BP
-        m10 = default_branch['protected']
+         # Branch Protection (BP)
+         BP = default_branch.protected
 
-        # calculate IP
-        now = datetime.now()
-        commit_info = default_branch['commit']
-        latestCommit = datetime.strptime(commit_info['authored_date'], '%Y-%m-%dT%H:%M:%S.%f%z').replace(tzinfo=None)
-        howLong = now - latestCommit
-        IP = howLong.days
+         # Inactive Period (IP)
+         commit_info = default_branch.commit
+         latestCommit = datetime.strptime(commit_info['authored_date'], '%Y-%m-%dT%H:%M:%S.%f%z').replace(tzinfo=None)
+         howLong = now - latestCommit
+         IP = howLong.days
 
-    output.append({'name': prj_name, 'Number of Contributors': str(NC), 'Inactive Period': str(IP), 'MTTU': str(MU), 'MTTC': str(MC), 'Branch Protection': BP})
+      except Exception as e:
+         print(f"Error processing GitLab repository: {e}")
+         return None
+   else:
+      print(f"Unsupported domain: {domain}")
+      return None
 
-f.close()
+   # Store the metrics in a dictionary
+   output['name'] = prj_name
+   output['Number of Contributors'] = str(NC)
+   output['Inactive Period'] = str(IP)
+   output['MTTU'] = str(MU)
+   output['MTTC'] = str(MC)
+   output['Branch Protection'] = BP
 
-# JSON output
-outputFile = open(OUTPUT_FILE, 'w')
-outputFile.write(json.dumps(output, indent=4))
-outputFile.close()
+   return output
+
+def process_repositories(repo_urls, githubToken=''):
+   """
+   Process a list of repository URLs.
+   :param repo_urls: list - List of repository URLs.
+   :param githubToken: str - GitHub token.
+   :return: list - List of repository metrics.
+   """
+
+   output = []
+   for repo_url in repo_urls:
+      repo_data = process_repository(repo_url, githubToken)
+      if repo_data:
+         output.append(repo_data)
+   return output
+
+def main(repo_urls=None, githubToken=''):
+   """
+   Main function.
+   :param repo_urls: list - List of repository URLs.
+   :param githubToken: str - GitHub token.
+   :return: None
+   """
+
+   if not repo_urls:
+      # Fallback to reading from the input file if no URLs are provided
+      with open(INPUT_FILE, 'r') as f:
+         repo_urls = [line.strip() for line in f if line.strip()]
+
+   # Process the repositories and get the output
+   output = process_repositories(repo_urls, githubToken)
+
+   # Write the output to the file
+   with open(OUTPUT_FILE, 'w') as outputFile:
+      outputFile.write(json.dumps(output, indent=4))
+
+   print(f"Output written to {OUTPUT_FILE}")
+
+if __name__ == "__main__":
+   # Argument parser to handle command-line inputs
+   parser = argparse.ArgumentParser(description="Process repository URLs for metrics extraction")
+   parser.add_argument(
+      'repo_urls', nargs='*', help="List of repository URLs to process", default=None
+   )
+   parser.add_argument(
+      '--githubToken', help="GitHub token for authentication", default=''
+   )
+
+   args = parser.parse_args()
+
+   # If repository URLs are passed as arguments, use them. Otherwise, fallback to input file.
+   if args.repo_urls:
+      main(repo_urls=args.repo_urls, githubToken=args.githubToken)
+   else:
+      main(githubToken=args.githubToken)
