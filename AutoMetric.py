@@ -4,7 +4,12 @@ from github import Github
 import gitlab
 from datetime import datetime
 
-f = open('input.txt')
+# Global variables
+INPUT_FILE = "input.txt" # The input file with repository URLs
+OUTPUT_FILE = "output.json" # The output file with repository metadata
+
+
+f = open(INPUT_FILE, 'r')
 githubToken = ''
 
 output = []
@@ -122,6 +127,6 @@ while True:
 f.close()
 
 # JSON output
-outputFile = open('output.json', 'w')
+outputFile = open(OUTPUT_FILE, 'w')
 outputFile.write(json.dumps(output, indent=4))
 outputFile.close()
