@@ -51,14 +51,14 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
    query = parse.urlparse(prj_repo)[2][1:]
    print(f"Processing repository: {query}")
    domain = parse.urlparse(prj_repo)[1]
-   prj_org = query.split('/')[-2]
-   prj_name = query.split('/')[-1]
+   prj_org = query.split("/")[-2]
+   prj_name = query.split("/")[-1]
 
-   parse_url = parse.quote(prj_repo, safe='')
+   parse_url = parse.quote(prj_repo, safe="")
 
    now = datetime.now()
 
-   if domain == 'github.com':
+   if domain == "github.com":
       g = Github(githubToken)
 
       try:
@@ -71,7 +71,7 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
          try:
             releases = gitRepo.get_releases()
             if releases.totalCount == 0:
-               MU = 'n/a'
+               MU = "n/a"
             else:
                last_release_page_number = (releases.totalCount - 1) // 30
                last_release_page = releases.get_page(last_release_page_number)
@@ -79,13 +79,13 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
                first_release_to_now = now - first_release.created_at
                MU = first_release_to_now.days / releases.totalCount
          except:
-               MU = 'n/a'
+               MU = "n/a"
 
          # Mean Time to Commit (MTTC)
          try:
             commits = gitRepo.get_commits()
             if commits.totalCount == 0:
-               MC = 'n/a'
+               MC = "n/a"
             else:
                last_commit_page_number = (commits.totalCount - 1) // 30
                last_commit_page = commits.get_page(last_commit_page_number)
@@ -93,13 +93,13 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
                first_commit_to_now = now - first_commit.commit.author.date
                MC = first_commit_to_now.days / commits.totalCount
          except:
-            MC = 'n/a'
+            MC = "n/a"
 
          # Number of Contributors (NC)
          try:
             NC = contributors.totalCount + 1  # +1 to count the owner
          except:
-            NC = 'n/a'
+            NC = "n/a"
 
          # Branch Protection (BP)
          try:
@@ -107,7 +107,7 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
             branch = gitRepo.get_branch(default_branch)
             BP = branch.protected
          except:
-            BP = 'n/a'
+            BP = "n/a"
 
          # Inactive Period (IP)
          try:
@@ -116,15 +116,15 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
             howLong = now - latestCommit
             IP = howLong.days
          except:
-            IP = 'n/a'
+            IP = "n/a"
 
       except Exception as e:
          print(f"Error processing GitHub repository: {e}")
          return None
 
-   elif domain in ['salsa.debian.org', 'gitlab.freedesktop.org']:
+   elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]:
       try:
-         salsa = gitlab.Gitlab('https://' + domain)
+         salsa = gitlab.Gitlab("https://" + domain)
          project = salsa.projects.get(query)
 
          # Get default branch
@@ -140,7 +140,7 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
 
          # Inactive Period (IP)
          commit_info = default_branch.commit
-         latestCommit = datetime.strptime(commit_info['authored_date'], '%Y-%m-%dT%H:%M:%S.%f%z').replace(tzinfo=None)
+         latestCommit = datetime.strptime(commit_info["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z").replace(tzinfo=None)
          howLong = now - latestCommit
          IP = howLong.days
 
@@ -152,12 +152,12 @@ def process_repository(prj_repo, githubToken=verify_env_file()):
       return None
 
    # Store the metrics in a dictionary
-   output['name'] = prj_name
-   output['Number of Contributors'] = str(NC)
-   output['Inactive Period'] = str(IP)
-   output['MTTU'] = str(MU)
-   output['MTTC'] = str(MC)
-   output['Branch Protection'] = BP
+   output["name"] = prj_name
+   output["Number of Contributors"] = str(NC)
+   output["Inactive Period"] = str(IP)
+   output["MTTU"] = str(MU)
+   output["MTTC"] = str(MC)
+   output["Branch Protection"] = BP
 
    return output
 
@@ -192,7 +192,7 @@ def main(repo_urls=None):
    else:
       print(f"Processing repositories from the input file {INPUT_FILE} and writing output to {OUTPUT_FILE}.")
       print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
-      with open(INPUT_FILE, 'r') as f:
+      with open(INPUT_FILE, "r") as f:
          repo_urls = [line.strip() for line in f if line.strip()]
 
    githubToken = verify_env_file()
@@ -206,10 +206,10 @@ def main(repo_urls=None):
          output.append(repo_data) # Append the repository data to the output list
 
    # Write the output to the file
-   with open(OUTPUT_FILE, 'w') as outputFile:
+   with open(OUTPUT_FILE, "w") as outputFile:
       outputFile.write(json.dumps(output, indent=4))
    print(f"Output written to {OUTPUT_FILE}")
-   
+
    print(f"\nProgram finished.") # Output the end of the program message
 
 if __name__ == "__main__":
