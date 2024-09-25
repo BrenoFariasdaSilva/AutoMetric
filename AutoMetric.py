@@ -184,21 +184,33 @@ def main(repo_urls=None):
    :return: None
    """
 
-   if not repo_urls:
-      # Fallback to reading from the input file if no URLs are provided
+   print(f"Welcome to the AutoMetric program!") # Output the welcome message
+
+   if repo_urls:
+      print(f"Processing the provided list of repositories...")
+      print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
+   else:
+      print(f"Processing repositories from the input file {INPUT_FILE} and writing output to {OUTPUT_FILE}.")
+      print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
       with open(INPUT_FILE, 'r') as f:
          repo_urls = [line.strip() for line in f if line.strip()]
 
-   githubToken = githubToken or verify_env_file()
+   githubToken = verify_env_file()
 
-   # Process the repositories and get the output
-   output = process_repositories(repo_urls, githubToken)
+   output = [] # Initialize the output list
+   for repo_url in repo_urls: # Iterate over the repository URLs
+      repo_data = process_repository(repo_url, githubToken) # Process the repository
+      if repo_data: # If the repository data is not None
+         repo_name = repo_url.split("/")[-1] # Get the repository name from the URL
+         repo_data["name"] = repo_name # Add the repository name to the data
+         output.append(repo_data) # Append the repository data to the output list
 
    # Write the output to the file
    with open(OUTPUT_FILE, 'w') as outputFile:
       outputFile.write(json.dumps(output, indent=4))
-
    print(f"Output written to {OUTPUT_FILE}")
+   
+   print(f"\nProgram finished.") # Output the end of the program message
 
 if __name__ == "__main__":
    """
