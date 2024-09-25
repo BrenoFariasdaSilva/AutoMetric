@@ -198,6 +198,17 @@ def process_repositories(repo_urls, githubToken=verify_env_file()):
          output.append(repo_data)
    return output
 
+def write_output(output_data, file_path):
+   """
+   Writes the output data to a JSON file.
+   
+   :param output_data: List of dictionaries containing repository metadata
+   :param file_path: Path to the output JSON file
+   """
+
+   with open(file_path, "w") as file: # Open the output file
+      json.dump(output_data, file, indent=4) # Write the output data to the file
+
 def main(repo_urls=None):
    """
    Main function.
@@ -226,10 +237,7 @@ def main(repo_urls=None):
          repo_data["name"] = repo_name # Add the repository name to the data
          output.append(repo_data) # Append the repository data to the output list
 
-   # Write the output to the file
-   with open(OUTPUT_FILE, "w") as outputFile:
-      outputFile.write(json.dumps(output, indent=4))
-   print(f"Output written to {OUTPUT_FILE}")
+   write_output(output, OUTPUT_FILE) # Write the output to a file
 
    print(f"\nProgram finished.") # Output the end of the program message
 
