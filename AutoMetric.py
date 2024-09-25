@@ -174,7 +174,7 @@ def process_repository(repo_url, githubToken=verify_env_file()):
       return None
 
    # Store the metrics in a dictionary
-   output["name"] = prj_name
+   output["name"] = project_name
    output["Number of Contributors"] = str(NC)
    output["Inactive Period"] = str(IP)
    output["MTTU"] = str(MU)
