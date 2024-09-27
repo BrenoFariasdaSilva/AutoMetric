@@ -8,7 +8,18 @@
   
 ---
 
-Welcome to the **AutoMetric** program! This tool automates the extraction of metadata from GitHub and GitLab repositories that measures Open-Source Software (OSS)quality metrics. It provides insights such as the number of contributors (NC), mean time to update (MTTU), mean time to commit (MTTC), branch protection status (BP), and inactive periods (IP) for repositories.
+# Welcome to the **AutoMetric** Repository!
+
+**AutoMetric** is an enhanced tool that automates the extraction of metadata from GitHub and GitLab repositories, providing comprehensive insights into Open-Source Software (OSS) quality metrics. This project is a fork of [AutoMetric](https://github.com/HckEX/AutoMetric), incorporating substantial enhancements, including:
+
+- Improved **AutoMetric.py** code quality.
+- Execution arguments for customized functionality.
+- Virtual environments for isolated package management.
+- Makefiles for easy execution.
+- Detailed code comments and documentation for better understanding.
+- A thorough README for clear guidance on usage.
+
+With **AutoMetric**, you can measure vital OSS quality metrics, including the number of contributors (NC), mean time to update (MTTU), mean time to commit (MTTC), branch protection status (BP), and inactive periods (IP) for repositories.
 
 ---
 
