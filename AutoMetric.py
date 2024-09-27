@@ -207,7 +207,7 @@ def print_repository_metrics(metadata):
    """
 
    metrics_summary = ", ".join(f"{BackgroundColors.GREEN}{key}: {BackgroundColors.CYAN}{value}{Style.RESET_ALL}" for key, value in metadata.items()) # Create the metrics summary
-   print(f"{BackgroundColors.GREEN}Repository metrics: {BackgroundColors.CYAN}{metrics_summary}{Style.RESET_ALL}\n") # Output the repository metrics
+   print(f"{metrics_summary}\n") # Output the repository metrics
 
 def process_repository(repo_url, githubToken):
    """
@@ -261,12 +261,12 @@ def main(repo_urls=None):
    print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
 
    if repo_urls: # If repository URLs are provided as arguments
-      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")
+      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
    else: # If no arguments are provided, read from the input file
-      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")
+      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
       repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
 
-   print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}")   
+   print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")   
 
    githubToken = verify_env_file() # Verify the .env file and get the GitHub token
 
