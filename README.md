@@ -33,7 +33,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 - [AutoMetric. ](#autometric-)
 	- [Table of Contents](#table-of-contents)
 	- [Introduction](#introduction)
-	- [Requirements](#requirements)
+	- [Setup](#setup)
 		- [Python and Pip](#python-and-pip)
 			- [Linux](#linux)
 			- [MacOS](#macos)
@@ -43,7 +43,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 
 The **AutoMetric** program is designed to assist developers and researchers in assessing the quality of open-source software projects. By automating the extraction of key metrics from GitHub and GitLab repositories, AutoMetric helps users evaluate the health and activity of repositories, ultimately contributing to better decision-making in software development.
 
-## Requirements
+## Setup
 
 This section provides instructions for installing the Python Language and Pip Python package manager, as well as the project's dependencies. It also explains how to run the scripts using the provided `makefile`. The `makefile` automates the process of creating a virtual environment, installing dependencies, and running the scripts.
 
@@ -78,4 +78,4 @@ choco install python3
 
 Or just download the installer from the [official website](https://www.python.org/downloads/).
 
-Great, you now have python3 and pip installed. Now, we need to install the project requirements/dependencies.
+Great, you now have python3 and pip installed. Now, you need to clone the repository (if you haven't done it yet) and install the dependencies.
