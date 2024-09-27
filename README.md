@@ -40,6 +40,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 			- [Windows](#windows)
 		- [Clone the repository](#clone-the-repository)
 		- [Dependencies](#dependencies)
+		- [Virtual Environment](#virtual-environment)
 	- [Contributing](#contributing)
 		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
 		- [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -146,6 +147,10 @@ This project depends on the following libraries:
 
 - [Sys](https://docs.python.org/3/library/sys.html)  
   The Sys module provides access to some variables used or maintained by the interpreter and to functions that interact with the interpreter.
+
+### Virtual Environment
+
+Furthermore, this project requires a virtual environment to ensure all dependencies are installed and managed in an isolated manner. A virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, along with a number of additional packages. Using a virtual environment helps avoid conflicts between project dependencies and system-wide Python packages.
 
 ## Contributing
 
