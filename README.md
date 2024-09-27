@@ -63,6 +63,7 @@ With **AutoMetric**, you can measure vital OSS quality metrics, including the nu
       - [Input File Example](#input-file-example)
   - [Metadata Extraction](#metadata-extraction)
     - [Original Text Reference](#original-text-reference)
+  - [Output:](#output)
   - [Contributing](#contributing)
     - [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
     - [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -343,17 +344,19 @@ T. Lee, H. Park, and H. Lee, "AutoMetric: Towards Measuring Open-Source Software
 [
     {
         "Repository Name": "BrenoFariasdaSilva/AutoMetric",
+        "Repository URL": "https://github.com/BrenoFariasdaSilva/AutoMetric",
         "Number of Contributors": 2,
         "MTTU": "n/a",
-        "MTTC": 10.919354838709678,
+        "MTTC": 10.257575757575758,
         "Branch Protection": false,
         "Inactive Period": 0
     },
     {
         "Repository Name": "BrenoFariasdaSilva/Worked-Example-Miner",
+        "Repository URL": "https://github.com/BrenoFariasdaSilva/Worked-Example-Miner",
         "Number of Contributors": 2,
         "MTTU": "n/a",
-        "MTTC": 0.28421052631578947,
+        "MTTC": 0.2840531561461794,
         "Branch Protection": false,
         "Inactive Period": 0
     }
