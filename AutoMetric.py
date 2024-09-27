@@ -329,11 +329,11 @@ if __name__ == "__main__":
    """
 
    parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics") # Create an argument parser
-   parser.add_argument("repo_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an argument for repository URLs
+   parser.add_argument("--repos_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an optional argument for repository URLs
 
    args = parser.parse_args() # Parse arguments
 
-   if args.repo_urls: # If repository URLs are provided as arguments
-      main(args.repo_urls) # Pass the list of repo URLs to main
+   if args.repos_urls: # If repository URLs are provided as arguments
+      main(args.repos_urls) # Pass the list of repo URLs to main
    else: # If no arguments
       main() # Run without arguments, fall back to input file processing
