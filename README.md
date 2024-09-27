@@ -119,10 +119,10 @@ Great, you now have python3 and pip installed. Now, you need to clone the reposi
 
 1. Clone the repository with the following command:
 
-	```bash
-		git clone https://github.com/BrenoFariasdaSilva/AutoMetric.git
-		cd AutoMetric
-	```
+```bash
+  git clone https://github.com/BrenoFariasdaSilva/AutoMetric.git
+  cd AutoMetric
+```
 
 ### Dependencies
 
