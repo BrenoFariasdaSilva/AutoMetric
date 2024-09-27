@@ -201,6 +201,71 @@ def process_github_repository(repo_path, githubToken):
       print(f"{BackgroundColors.RED}Error processing GitHub repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
+def create_gitlab_instance(domain):
+   """
+   Create a GitLab instance.
+   
+   :param domain: The GitLab domain (e.g., gitlab.com)
+   :return: GitLab instance
+   """
+
+   return gitlab.Gitlab(f"https://{domain}") # Create a GitLab instance
+
+def get_gitlab_project(gitlab_instance, repo_path):
+   """
+   Get the GitLab project.
+   
+   :param gitlab_instance: GitLab instance
+   :param repo_path: The repository path (org/repo)
+   :return: GitLab project object
+   """
+
+   return gitlab_instance.projects.get(repo_path) # Get the GitLab project
+
+def get_default_branch_gitlab(project):
+   """
+   Get the default branch of the project.
+   
+   :param project: GitLab project object
+   :return: Default branch
+   """
+
+   return next((branch for branch in project.branches.list() if branch.default), None) # Get the default branch
+
+def get_number_of_contributors_gitlab(project):
+   """
+   Get the number of contributors (NC).
+   
+   :param project: GitLab project object
+   :return: Number of contributors
+   """
+
+   return len(project.repository_contributors(get_all=True)) # Number of contributors (NC)
+
+def get_branch_protection_gitlab(default_branch):
+   """
+   Get branch protection status (BP).
+   
+   :param default_branch: The default branch of the GitLab project
+   :return: Branch protection status
+   """
+
+   return default_branch.protected # Return the branch protection status
+
+def calculate_inactive_period_gitlab(default_branch, now):
+   """
+   Calculate the Inactive Period (IP).
+   
+   :param default_branch: The default branch of the GitLab project
+   :param now: Current date and time
+   :return: Inactive Period (IP)
+   """
+
+   latest_commit_date = datetime.strptime( # Get the latest commit date
+      default_branch.commit["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z"
+   ).replace(tzinfo=None) # Remove the timezone
+   return (now - latest_commit_date).days # Calculate the inactive period
+
 def process_gitlab_repository(domain, repo_path):
    """
    Processes a GitLab repository to extract its metadata.
@@ -211,27 +276,20 @@ def process_gitlab_repository(domain, repo_path):
    """
 
    try: # Try to process the GitLab repository
-      gitlab_instance = gitlab.Gitlab(f"https://{domain}") # Create a GitLab instance
-      project = gitlab_instance.projects.get(repo_path) # Get the GitLab project
-      default_branch = next((branch for branch in project.branches.list() if branch.default), None) # Get the default branch
+      gitlab_instance = create_gitlab_instance(domain) # Create a GitLab instance
+      project = get_gitlab_project(gitlab_instance, repo_path) # Get the GitLab project
+      default_branch = get_default_branch_gitlab(project) # Get the default branch
 
       if not default_branch: # If the default branch is not found
          return None # Return None
 
-      # Number of contributors (NC)
-      nc = len(project.repository_contributors(get_all=True))
+      nc = get_number_of_contributors_gitlab(project) # Number of contributors (NC)
+      branch_protection = get_branch_protection_gitlab(default_branch) # Branch protection (BP)
 
-      # Branch protection (BP)
-      branch_protection = default_branch.protected
-
-      # Inactive Period (IP)
       now = datetime.now(timezone.utc) # Get the current date and time
-      latest_commit_date = datetime.strptime( # Get the latest commit date
-         default_branch.commit["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z"
-      ).replace(tzinfo=None)
-      ip = (now - latest_commit_date).days # Calculate the inactive period
+      ip = calculate_inactive_period_gitlab(default_branch, now) # Inactive Period (IP)
 
-      return {
+      return { # Return the repository metadata dictionary
          "Repository Name": repo_path, # Add repository name as the first element
          "Number of Contributors": nc, # Return the number of contributors
          "MTTU": "n/a", # GitLab doesn't support releases as in GitHub
