@@ -28,3 +28,12 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 ![RepoBeats Statistics](https://repobeats.axiom.co/api/embed/2b842aa456af773c314a8de80273eb20d81e77dd.svg "Repobeats analytics image")
 
 </div>
+
+## Table of Contents
+- [AutoMetric. ](#autometric-)
+	- [Table of Contents](#table-of-contents)
+	- [Introduction](#introduction)
+
+## Introduction
+
+The **AutoMetric** program is designed to assist developers and researchers in assessing the quality of open-source software projects. By automating the extraction of key metrics from GitHub and GitLab repositories, AutoMetric helps users evaluate the health and activity of repositories, ultimately contributing to better decision-making in software development.
