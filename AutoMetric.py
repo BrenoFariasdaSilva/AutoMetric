@@ -100,7 +100,7 @@ def parse_repository_url(repo_url):
 def process_github_repository(repo_path, githubToken):
    """
    Processes a GitHub repository to extract its metadata.
-   
+
    :param repo_path: GitHub repository path (org/repo)
    :param githubToken: GitHub token for API access
    :return: Dictionary with repository metadata
@@ -208,8 +208,12 @@ def print_repository_metrics(metadata):
    :param metadata: Dictionary containing repository metadata
    """
 
-   metrics_summary = ", ".join(f"{BackgroundColors.GREEN}{key}: {BackgroundColors.CYAN}{value}{Style.RESET_ALL}" for key, value in metadata.items()) # Create the metrics summary
-   print(f"{metrics_summary}\n") # Output the repository metrics
+   print(f"{BackgroundColors.CYAN}{metadata['Repository Name']}{Style.RESET_ALL}", end=": ") # Output the repository name
+   print(f"{BackgroundColors.GREEN}Number of Contributors: {BackgroundColors.CYAN}{metadata['Number of Contributors']}{Style.RESET_ALL}", end=", ") # Output the number of contributors
+   print(f"{BackgroundColors.GREEN}MTTU: {BackgroundColors.CYAN}{BackgroundColors.CYAN}{metadata['MTTU']}{Style.RESET_ALL}", end=", ") # Output the mean time to update
+   print(f"{BackgroundColors.GREEN}MTTC: {BackgroundColors.CYAN}{metadata['MTTC']}{Style.RESET_ALL}", end=", ") # Output the mean time to commit
+   print(f"{BackgroundColors.GREEN}Branch Protection: {BackgroundColors.CYAN}{metadata['Branch Protection']}{Style.RESET_ALL}", end=", ") # Output the branch protection status
+   print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{metadata['Inactive Period']} days ({metadata['Inactive Period']}){Style.RESET_ALL}") # Output the inactive period
 
 def process_repository(repo_url, githubToken):
    """
@@ -243,7 +247,7 @@ def write_output(output_data, file_path):
    :param file_path: Path to the output JSON file
    """
    
-   print(f"{BackgroundColors.GREEN}Writing output to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the writing message
+   print(f"\n{BackgroundColors.GREEN}Writing output to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the writing message
 
    with open(file_path, "w") as file: # Open the output file
       json.dump(output_data, file, indent=4) # Write the output data to the file
