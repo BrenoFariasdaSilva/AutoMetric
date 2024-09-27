@@ -1,8 +1,9 @@
 import argparse # Import the argparse module
 import gitlab # Import the gitlab module
 import json # Import the json module
-import os # Import the os module
+import os # For running a command in the terminal
 import sys # Import the sys module
+from colorama import Style # For coloring the terminal
 from datetime import datetime # Import the datetime class from the datetime module
 from dotenv import load_dotenv # For loading environment variables from .env file
 from github import Github # Import the Github class from the github package
@@ -16,6 +17,16 @@ OUTPUT_FILE = "output.json" # The output file with repository metadata
 ENV_PATH = "./.env" # The path to the .env file
 ENV_VARIABLE = "GITHUB_TOKEN" # The environment variable to load
 
+# Macros:
+class BackgroundColors: # Colors for the terminal
+   CYAN = "\033[96m" # Cyan
+   GREEN = "\033[92m" # Green
+   YELLOW = "\033[93m" # Yellow
+   RED = "\033[91m" # Red
+   BOLD = "\033[1m" # Bold
+   UNDERLINE = "\033[4m" # Underline
+   CLEAR_TERMINAL = "\033[H\033[J" # Clear the terminal
+   
 def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
    """
    Verify if the .env file exists and if the desired key is present.
