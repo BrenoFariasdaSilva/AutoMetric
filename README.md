@@ -16,10 +16,9 @@
 - Execution parameters for managing various input methods.
 - Environment configuration file to eliminate hardcoded GitHub tokens.
 - Virtual environments for isolated package management.
-- Makefiles for easy execution.
+- Makefile for simplified execution and management.
 - Detailed code comments and documentation for better understanding.
-- A thorough README for clear guidance on usage.
-- A detailed contribuing guide.
+- A comprehensive README providing clear guidance on usage, including sections on Introduction, Setup, Running AutoMetric.py, Metadata Extraction, Output, Contributing, and License.
 
 With **AutoMetric**, you can measure vital OSS quality metrics, including the number of contributors (NC), mean time to update (MTTU), mean time to commit (MTTC), branch protection status (BP), and inactive periods (IP) for repositories.
 
