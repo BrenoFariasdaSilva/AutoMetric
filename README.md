@@ -39,6 +39,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 			- [MacOS](#macos)
 			- [Windows](#windows)
 		- [Clone the repository](#clone-the-repository)
+		- [Dependencies](#dependencies)
 	- [Contributing](#contributing)
 		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
 		- [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -99,6 +100,14 @@ Great, you now have python3 and pip installed. Now, you need to clone the reposi
 		git clone https://github.com/BrenoFariasdaSilva/AutoMetric.git
 		cd AutoMetric
 	```
+
+### Dependencies
+
+1. Install the project dependencies/requirements with the following command:
+
+```bash
+make dependencies
+```
 
 ## Contributing
 
