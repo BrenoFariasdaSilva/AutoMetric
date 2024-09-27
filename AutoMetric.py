@@ -199,6 +199,16 @@ def process_gitlab_repository(domain, repo_path):
       print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
+def print_repository_metrics(metadata):
+   """
+   Prints the repository metadata.
+   
+   :param metadata: Dictionary containing repository metadata
+   """
+
+   metrics_summary = ", ".join(f"{BackgroundColors.GREEN}{key}: {BackgroundColors.CYAN}{value}{Style.RESET_ALL}" for key, value in metadata.items()) # Create the metrics summary
+   print(f"{BackgroundColors.GREEN}Repository metrics: {BackgroundColors.CYAN}{metrics_summary}{Style.RESET_ALL}\n") # Output the repository metrics
+
 def process_repository(repo_url, githubToken):
    """
    Determines the repository hosting service (GitHub or GitLab) and processes the repository accordingly.
@@ -218,6 +228,8 @@ def process_repository(repo_url, githubToken):
    else: # If the domain is not supported
       print(f"{BackgroundColors.GREEN}Unsupported domain: {BackgroundColors.CYAN}{domain}{Style.RESET_ALL}") # Output the unsupported domain message
       return None # Return None
+
+   print_repository_metrics(metrics) if metrics else None # Print the repository metadata
    
    return metrics  # Return the metrics dictionary
 
