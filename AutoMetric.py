@@ -243,9 +243,9 @@ def main(repo_urls=None):
    print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
 
    if repo_urls: # If repository URLs are provided as arguments
-      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
+      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")
    else: # If no arguments are provided, read from the input file
-      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
+      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")
       repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
 
    print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}")   
