@@ -45,7 +45,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
   - [Run AutoMetric.py](#run-autometricpy)
     - [Using the Makefile](#using-the-makefile-1)
       - [With Execution Arguments](#with-execution-arguments)
-      - [Wiithout the Execution Arguments](#wiithout-the-execution-arguments)
+      - [Without the Execution Arguments](#without-the-execution-arguments)
     - [Without Using the Makefile](#without-using-the-makefile)
       - [Input File Example](#input-file-example)
   - [Metadata Extraction](#metadata-extraction)
@@ -238,7 +238,7 @@ To run the `AutoMetric.py` script with the Makefile, ensure you are in the proje
 make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2"
 ```
 
-#### Wiithout the Execution Arguments
+#### Without the Execution Arguments
 
 ```bash
 make auto_metric_script
