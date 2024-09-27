@@ -48,6 +48,8 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 			- [Wiithout the Execution Arguments](#wiithout-the-execution-arguments)
 		- [Without Using the Makefile](#without-using-the-makefile)
 			- [Input File Example](#input-file-example)
+	- [Metadata Extraction](#metadata-extraction)
+		- [Original Text Reference](#original-text-reference)
 	- [Contributing](#contributing)
 		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
 		- [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -264,6 +266,27 @@ https://gitlab.com/username/repository2
 ```
 
 This will allow the script to read all listed repositories during execution
+
+## Metadata Extraction
+
+For each repository, the script retrieves several key metrics, including:
+
+- **Mean Time to Update (MU)**: This metric measures the average time between releases of a repository. The value is calculated using the `created_at` timestamp from the releases API of GitHub and GitLab, averaged over the total number of releases. A lower MU indicates more frequent updates, while a higher MU may suggest infrequent updates. Repositories with high MU values typically exhibit fewer vulnerabilities.
+
+- **Mean Time to Commit (MC)**: This metric indicates how frequently commits are made to the repository, with the frequency reflecting the level of activity. The MC is calculated by counting the total number of commits obtained from the Commits API and dividing it by the time since the first commit. Higher MC values generally correlate with fewer vulnerabilities.
+
+- **Inactive Period (IP)**: This metric measures the duration since the last commit. A higher IP indicates a longer period of inactivity, which may not necessarily degrade the security of completed projects but suggests less ongoing development. Repositories with high IP values often show fewer vulnerabilities, contrary to the expectation that active management leads to better security.
+
+- **Number of Contributors (NC)**: This metric quantifies the number of contributors participating in the repository. A higher NC may suggest better security, although the relationship is not always clear. 
+
+- **Branch Protection (BP)**: This metric determines whether branch protection settings are applied in the repository. The protected status can influence the repository's security, with higher averages of vulnerabilities found in repositories without branch protection.
+
+These metrics collectively provide insights into the quality and security of open-source software projects.
+
+### Original Text Reference
+The information for these metrics is extracted from the following paper:
+T. Lee, H. Park, and H. Lee, "AutoMetric: Towards Measuring Open-Source Software Quality Metrics Automatically," 2023 IEEE/ACM International Conference on Automation of Software Test (AST), Melbourne, Australia, 2023, pp. 47-55, doi: 10.1109/AST58925.2023.00009.
+
 
 ## Contributing
 
