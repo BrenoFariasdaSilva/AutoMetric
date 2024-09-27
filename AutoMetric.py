@@ -97,6 +97,78 @@ def parse_repository_url(repo_url):
    project_name = repo_path.split("/")[-1] # Get the project name
    return domain, org_name, project_name, repo_path # Return the domain, organization, project name, and repository path
 
+def get_number_of_contributors_github(repo):
+   """
+   Get the number of contributors.
+   
+   :param repo: GitHub repository object
+   :return: Total number of contributors
+   """
+   
+   contributors = repo.get_contributors() # Get the contributors
+   return contributors.totalCount # Get the total number of contributors
+
+def calculate_mttu_github(repo, now):
+   """
+   Calculate the Mean Time to Update (MTTU).
+   
+   :param repo: GitHub repository object
+   :param now: Current date and time
+   :return: Mean Time to Update (MTTU)
+   """
+
+   releases = repo.get_releases() # Get the releases
+   if releases.totalCount > 0: # If there are releases
+      first_release = releases.get_page(releases.totalCount // 30)[-1] # Get the first release
+      days_since_first_release = (now - first_release.created_at).days # Calculate the days since the first release
+      return days_since_first_release / releases.totalCount # Calculate the mean time to update
+   return "n/a" # Set the mean time to update to "n/a"
+
+def calculate_mttc_github(repo, now):
+   """
+   Calculate the Mean Time to Commit (MTTC).
+   
+   :param repo: GitHub repository object
+   :param now: Current date and time
+   :return: Mean Time to Commit (MTTC)
+   """
+
+   commits = repo.get_commits() # Get the commits
+   if commits.totalCount > 0: # If there are commits
+      first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
+      days_since_first_commit = (now - first_commit.commit.author.date.replace(tzinfo=timezone.utc)).days # Calculate the days since the first commit
+      return days_since_first_commit / commits.totalCount # Calculate the mean time to commit
+   return "n/a" # Set the mean time to commit to "n/a"
+
+def get_branch_protection_github(repo):
+   """
+   Get branch protection status.
+   
+   :param repo: GitHub repository object
+   :return: Branch protection status
+   """
+
+   try: # Try to get the branch protection
+      default_branch = repo.get_branch(repo.default_branch) # Get the default branch
+      return default_branch.protected # Get the branch protection status
+   except Exception: # If an exception occurs
+      return "n/a" # Set the branch protection status to "n/a"
+
+def get_inactive_period_github(repo, now):
+   """
+   Calculate the Inactive Period (IP).
+   
+   :param repo: GitHub repository object
+   :param now: Current date and time
+   :return: Inactive Period (IP)
+   """
+
+   try: # Try to get the inactive period
+      latest_commit_date = repo.get_branch(repo.default_branch).commit.commit.author.date # Get the latest commit date
+      return (now - latest_commit_date).days # Calculate the inactive period
+   except Exception: # If an exception occurs
+      return "n/a" # Set the inactive period to "n/a"
+
 def process_github_repository(repo_path, githubToken):
    """
    Processes a GitHub repository to extract its metadata.
@@ -111,41 +183,11 @@ def process_github_repository(repo_path, githubToken):
       repo = github.get_repo(repo_path) # Get the GitHub repository
       now = datetime.now(timezone.utc) # Get the current date and time
 
-      # Number of contributors (NC)
-      contributors = repo.get_contributors() # Get the contributors
-      nc = contributors.totalCount # Get the total number of contributors
-
-      # Mean Time to Update (MTTU)
-      releases = repo.get_releases() # Get the releases
-      if releases.totalCount > 0: # If there are releases
-         first_release = releases.get_page(releases.totalCount // 30)[-1] # Get the first release
-         days_since_first_release = (now - first_release.created_at).days # Calculate the days since the first release
-         mttu = days_since_first_release / releases.totalCount # Calculate the mean time to update
-      else: # If there are no releases
-         mttu = "n/a" # Set the mean time to update to "n/a"
-
-      # Mean Time to Commit (MTTC)
-      commits = repo.get_commits() # Get the commits
-      if commits.totalCount > 0: # If there are commits
-         first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
-         days_since_first_commit = (now - first_commit.commit.author.date.replace(tzinfo=timezone.utc)).days # Calculate the days since the first commit
-         mttc = days_since_first_commit / commits.totalCount # Calculate the mean time to commit
-      else: # If there are no commits
-         mttc = "n/a" # Set the mean time to commit to "n/a"
-
-      # Branch protection (BP)
-      try: # Try to get the branch protection
-         default_branch = repo.get_branch(repo.default_branch) # Get the default branch
-         branch_protection = default_branch.protected # Get the branch protection status
-      except: # If an exception occurs
-         branch_protection = "n/a" # Set the branch protection status to "n/a"
-
-      # Inactive Period (IP)
-      try: # Try to get the inactive period
-         latest_commit_date = repo.get_branch(repo.default_branch).commit.commit.author.date # Get the latest commit date
-         ip = (now - latest_commit_date).days # Calculate the inactive period
-      except: # If an exception occurs
-         ip = "n/a" # Set the inactive period to "n/a"
+      nc = get_number_of_contributors_github(repo) # Number of contributors (NC)
+      mttu = calculate_mttu_github(repo, now) # Mean Time to Update (MTTU)
+      mttc = calculate_mttc_github(repo, now) # Mean Time to Commit (MTTC)
+      branch_protection = get_branch_protection_github(repo) # Branch protection (BP)
+      ip = get_inactive_period_github(repo, now) # Inactive Period (IP)
 
       return { # Return the repository metadata dictionary
          "Repository Name": repo_path, # Add repository name as the first element
