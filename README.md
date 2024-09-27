@@ -13,3 +13,18 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 ---
 
 </div>
+
+<div align="center">
+
+![GitHub Code Size in Bytes Badge](https://img.shields.io/github/languages/code-size/BrenoFariasdaSilva/AutoMetric)
+![GitHub Last Commit Badge](https://img.shields.io/github/last-commit/BrenoFariasdaSilva/AutoMetric)
+![GitHub License Badge](https://img.shields.io/github/license/BrenoFariasdaSilva/AutoMetric)
+![Wakatime Badge](https://wakatime.com/badge/github/BrenoFariasdaSilva/AutoMetric.svg)
+
+</div>
+
+<div align="center">
+  
+![RepoBeats Statistics](https://repobeats.axiom.co/api/embed/2b842aa456af773c314a8de80273eb20d81e77dd.svg "Repobeats analytics image")
+
+</div>
