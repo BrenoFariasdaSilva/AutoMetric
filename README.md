@@ -31,35 +31,35 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 
 ## Table of Contents
 - [AutoMetric. ](#autometric-)
-	- [Table of Contents](#table-of-contents)
-	- [Introduction](#introduction)
-	- [Setup](#setup)
-		- [Python and Pip](#python-and-pip)
-			- [Linux](#linux)
-			- [MacOS](#macos)
-			- [Windows](#windows)
-		- [Clone the repository](#clone-the-repository)
-		- [Dependencies](#dependencies)
-		- [Virtual Environment](#virtual-environment)
-		- [Using the Makefile](#using-the-makefile)
-	- [Run AutoMetric.py](#run-autometricpy)
-		- [Using the Makefile](#using-the-makefile-1)
-			- [With Execution Arguments](#with-execution-arguments)
-			- [Wiithout the Execution Arguments](#wiithout-the-execution-arguments)
-		- [Without Using the Makefile](#without-using-the-makefile)
-			- [Input File Example](#input-file-example)
-	- [Metadata Extraction](#metadata-extraction)
-		- [Original Text Reference](#original-text-reference)
-	- [Contributing](#contributing)
-		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
-		- [Step 2: Make Your Changes](#step-2-make-your-changes)
-		- [Crafting Your Commit Messages](#crafting-your-commit-messages)
-		- [Navigating Commits](#navigating-commits)
-		- [Step 3: Submit Your Contribution](#step-3-submit-your-contribution)
-		- [Step 4: Stay Engaged](#step-4-stay-engaged)
-		- [Step 5: Celebrate Your Contribution](#step-5-celebrate-your-contribution)
-	- [License](#license)
-		- [Apache License 2.0](#apache-license-20)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Setup](#setup)
+    - [Python and Pip](#python-and-pip)
+      - [Linux](#linux)
+      - [MacOS](#macos)
+      - [Windows](#windows)
+    - [Clone the repository](#clone-the-repository)
+    - [Dependencies](#dependencies)
+    - [Virtual Environment](#virtual-environment)
+    - [Using the Makefile](#using-the-makefile)
+  - [Run AutoMetric.py](#run-autometricpy)
+    - [Using the Makefile](#using-the-makefile-1)
+      - [With Execution Arguments](#with-execution-arguments)
+      - [Wiithout the Execution Arguments](#wiithout-the-execution-arguments)
+    - [Without Using the Makefile](#without-using-the-makefile)
+      - [Input File Example](#input-file-example)
+  - [Metadata Extraction](#metadata-extraction)
+    - [Original Text Reference](#original-text-reference)
+  - [Contributing](#contributing)
+    - [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
+    - [Step 2: Make Your Changes](#step-2-make-your-changes)
+    - [Crafting Your Commit Messages](#crafting-your-commit-messages)
+    - [Navigating Commits](#navigating-commits)
+    - [Step 3: Submit Your Contribution](#step-3-submit-your-contribution)
+    - [Step 4: Stay Engaged](#step-4-stay-engaged)
+    - [Step 5: Celebrate Your Contribution](#step-5-celebrate-your-contribution)
+  - [License](#license)
+    - [Apache License 2.0](#apache-license-20)
 
 ## Introduction
 
@@ -235,7 +235,7 @@ In this project, we developed a Python script named `AutoMetric.py` designed to 
 To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Use the following command:
 
 ```bash
-make auto_metric_script args="--repos https://github.com/username/repository1 https://gitlab.com/username/repository2"
+make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2"
 ```
 
 #### Wiithout the Execution Arguments
@@ -248,13 +248,21 @@ This command executes the script using the Python interpreter and packages insta
 
 ### Without Using the Makefile
 
-You can also run the `AutoMetric.py` script directly using the Python interpreter without the Makefile. For example:
+Before running the `AutoMetric.py` script, you need to activate the virtual environment where the necessary dependencies are installed. This ensures that all required libraries are available for the script. To do this, you can use the `source` command to activate the virtual environment:
 
 ```bash
-python3 ./AutoMetric.py --repos "https://github.com/username/repository1" "https://gitlab.com/username/repository2"
+source venv/bin/activate
 ```
 
-In this case, replace username and repository with the actual GitHub or GitLab usernames and repository names. This command allows you to provide repository URLs directly as command-line arguments.
+Once the virtual environment is activated, you can directly run the AutoMetric.py script using the Python interpreter:
+
+```bash
+python3 ./AutoMetric.py --repos_urls "https://github.com/username/repository1" "https://gitlab.com/username/repository2"
+```
+
+In this case, replace `username` and `repository` with the actual GitHub or GitLab usernames and repository names. This command allows you to provide repository URLs directly as command-line arguments.
+
+Remember to always activate the virtual environment before running the script to ensure that all dependencies are properly loaded.
 
 #### Input File Example
 
