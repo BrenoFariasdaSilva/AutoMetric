@@ -6,7 +6,7 @@ import os # For running a command in the terminal
 import platform # For getting the operating system name
 import sys # Import the sys module
 from colorama import Style # For coloring the terminal
-from datetime import datetime # Import the datetime class from the datetime module
+from datetime import datetime, timezone # Import the datetime class from the datetime module
 from dotenv import load_dotenv # For loading environment variables from .env file
 from github import Github # Import the Github class from the github package
 from urllib import parse # Import the parse module from the urllib package
@@ -109,7 +109,7 @@ def process_github_repository(repo_path, githubToken):
    github = Github(githubToken) # Create a GitHub instance
    try: # Try to process the GitHub repository
       repo = github.get_repo(repo_path) # Get the GitHub repository
-      now = datetime.now() # Get the current date and time
+      now = datetime.now(timezone.utc) # Get the current date and time
 
       # Number of contributors (NC)
       contributors = repo.get_contributors() # Get the contributors
@@ -128,7 +128,7 @@ def process_github_repository(repo_path, githubToken):
       commits = repo.get_commits() # Get the commits
       if commits.totalCount > 0: # If there are commits
          first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
-         days_since_first_commit = (now - first_commit.commit.author.date).days # Calculate the days since the first commit
+         days_since_first_commit = (now - first_commit.commit.author.date.replace(tzinfo=timezone.utc)).days # Calculate the days since the first commit
          mttc = days_since_first_commit / commits.totalCount # Calculate the mean time to commit
       else: # If there are no commits
          mttc = "n/a" # Set the mean time to commit to "n/a"
@@ -182,7 +182,7 @@ def process_gitlab_repository(domain, repo_path):
       branch_protection = default_branch.protected
 
       # Inactive Period (IP)
-      now = datetime.now() # Get the current date and time
+      now = datetime.now(timezone.utc) # Get the current date and time
       latest_commit_date = datetime.strptime( # Get the latest commit date
          default_branch.commit["authored_date"], "%Y-%m-%dT%H:%M:%S.%f%z"
       ).replace(tzinfo=None)
