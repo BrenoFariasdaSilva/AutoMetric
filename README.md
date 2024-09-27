@@ -5,7 +5,7 @@
 </div>
 
 <div align="center">
-  
+
 ---
 
 # Welcome to the **AutoMetric** Repository!
@@ -18,6 +18,7 @@
 - Makefiles for easy execution.
 - Detailed code comments and documentation for better understanding.
 - A thorough README for clear guidance on usage.
+- A detailed contribuing guide.
 
 With **AutoMetric**, you can measure vital OSS quality metrics, including the number of contributors (NC), mean time to update (MTTU), mean time to commit (MTTC), branch protection status (BP), and inactive periods (IP) for repositories.
 
