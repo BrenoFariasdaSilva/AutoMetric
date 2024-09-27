@@ -41,6 +41,7 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 		- [Clone the repository](#clone-the-repository)
 		- [Dependencies](#dependencies)
 		- [Virtual Environment](#virtual-environment)
+		- [Using the Makefile](#using-the-makefile)
 	- [Contributing](#contributing)
 		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
 		- [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -151,6 +152,66 @@ This project depends on the following libraries:
 ### Virtual Environment
 
 Furthermore, this project requires a virtual environment to ensure all dependencies are installed and managed in an isolated manner. A virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, along with a number of additional packages. Using a virtual environment helps avoid conflicts between project dependencies and system-wide Python packages.
+
+### Using the Makefile
+
+To set up and use a virtual environment for this project, we leverage Python's built-in `venv` module. The `makefile` included with the project automates the process of creating a virtual environment, installing the necessary dependencies, and running scripts within this environment.
+
+Follow these steps to prepare your environment:
+
+1. **Create and Activate the Virtual Environment:** 
+
+   The project uses a `makefile` to streamline the creation and activation of a virtual environment named `venv`. This environment is where all required packages, such as `GitHub API for Python`, `GitLab API for Python`, `colorama`, `python-dotenv`, `json`, `tqdm`, `datetime`, `argparse`, `os`, and `platform`, will be installed. 
+
+   This process will also be handled by the `Makefile` during the dependencies installation, so no additional commands need to be executed to create the virtual environment.
+
+2. **Install Dependencies:** 
+   
+   Run the following command to set up the virtual environment and install all necessary dependencies on it:
+
+    ```
+    make dependencies
+    ```
+
+   This command performs the following actions:
+  - Creates a new virtual environment by running `python3 -m venv venv`.
+  - Installs the project's dependencies within the virtual environment using `pip` based on the `requirements.txt` file. The `requirements.txt` file contains a list of all required packages and their versions. This is the recommended way to manage dependencies in Python projects, as it allows for consistent and reproducible installations across different environments.
+
+      If you need to manually activate the virtual environment, you can do so by running the following command:
+
+      ```
+      source venv/bin/activate
+      ```
+
+3. **Running Script:**
+   
+   The `makefile` also defines commands to run every script with the virtual environment's Python interpreter. For example, to run the `AutoMetric.py` file, use:
+
+   ```
+   make auto_metric_script
+   ```
+
+   This ensures that the script runs using the Python interpreter and packages installed in the `venv` directory.
+
+4. **Generate the requirements.txt file:**
+
+   If you changed the project dependencies and want to update the `requirements.txt` file, you can run the following command:
+
+   ```
+   make generate_requirements
+   ```
+
+   This command will generate the `requirements.txt` file in the root of the tool directory (`PyDriller/`), which will contain all the dependencies used in the virtual environment of the project.
+
+5. **Cleaning Up:**
+
+	To clean your project directory from the virtual environment and Python cache files, use the `clean` rule defined in the `makefile`:
+
+	```
+	make clean
+	```
+
+	This command removes the `venv` directory and deletes any cached Python files in the project directory, helping maintain a clean workspace.
 
 ## Contributing
 
