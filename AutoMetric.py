@@ -245,10 +245,10 @@ def print_repository_metrics(metadata):
 
    print(f"{BackgroundColors.CYAN}{metadata['Repository Name']}{Style.RESET_ALL}", end=": ") # Output the repository name
    print(f"{BackgroundColors.GREEN}Number of Contributors: {BackgroundColors.CYAN}{metadata['Number of Contributors']}{Style.RESET_ALL}", end=", ") # Output the number of contributors
-   print(f"{BackgroundColors.GREEN}MTTU: {BackgroundColors.CYAN}{BackgroundColors.CYAN}{metadata['MTTU']}{Style.RESET_ALL}", end=", ") # Output the mean time to update
-   print(f"{BackgroundColors.GREEN}MTTC: {BackgroundColors.CYAN}{metadata['MTTC']}{Style.RESET_ALL}", end=", ") # Output the mean time to commit
+   print(f"{BackgroundColors.GREEN}MTTU: {BackgroundColors.CYAN}{BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['MTTU'])}{Style.RESET_ALL}", end=", ") # Output the mean time to update
+   print(f"{BackgroundColors.GREEN}MTTC: {BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['MTTC'])}{Style.RESET_ALL}", end=", ") # Output the mean time to commit
    print(f"{BackgroundColors.GREEN}Branch Protection: {BackgroundColors.CYAN}{metadata['Branch Protection']}{Style.RESET_ALL}", end=", ") # Output the branch protection status
-   print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{metadata['Inactive Period']} days ({metadata['Inactive Period']}){Style.RESET_ALL}") # Output the inactive period
+   print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['Inactive Period'])}{Style.RESET_ALL}", end="\n\n") # Output the inactive period
 
 def process_repository(repo_url, githubToken):
    """
@@ -282,7 +282,7 @@ def write_output(output_data, file_path):
    :param file_path: Path to the output JSON file
    """
    
-   print(f"\n{BackgroundColors.GREEN}Writing output to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the writing message
+   print(f"{BackgroundColors.GREEN}Writing output to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the writing message
 
    with open(file_path, "w") as file: # Open the output file
       json.dump(output_data, file, indent=4) # Write the output data to the file
