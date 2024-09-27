@@ -47,6 +47,8 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 		- [Step 3: Submit Your Contribution](#step-3-submit-your-contribution)
 		- [Step 4: Stay Engaged](#step-4-stay-engaged)
 		- [Step 5: Celebrate Your Contribution](#step-5-celebrate-your-contribution)
+	- [License](#license)
+		- [Apache License 2.0](#apache-license-20)
 
 ## Introduction
 
@@ -201,3 +203,9 @@ Once your pull request has been reviewed and merged, your contribution is now pa
 ---
 
 By following these steps, you can contribute effectively to projects and make a positive impact on the open-source ecosystem. Thank you for contributing!
+
+## License
+
+### Apache License 2.0
+
+This project is licensed under the [Apache License 2.0](LICENSE). This license permits use, modification, distribution, and sublicense of the code for both private and commercial purposes, provided that the original copyright notice and a disclaimer of warranty are included in all copies or substantial portions of the software. It also requires a clear attribution back to the original author(s) of the repository. For more details, see the [LICENSE](LICENSE) file in this repository.
