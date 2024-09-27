@@ -212,12 +212,14 @@ def process_repository(repo_url, githubToken):
    print(f"{BackgroundColors.GREEN}Processing {BackgroundColors.CYAN}{domain}/{repo_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the processing message
 
    if domain == "github.com": # If the domain is GitHub
-      return process_github_repository(repo_path, githubToken) # Process the GitHub repository
+      metrics = process_github_repository(repo_path, githubToken) # Process the GitHub repository
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
-      return process_gitlab_repository(domain, repo_path) # Process the GitLab repository
+      metrics = process_gitlab_repository(domain, repo_path) # Process the GitLab repository
    else: # If the domain is not supported
       print(f"{BackgroundColors.GREEN}Unsupported domain: {BackgroundColors.CYAN}{domain}{Style.RESET_ALL}") # Output the unsupported domain message
       return None # Return None
+   
+   return metrics  # Return the metrics dictionary
 
 def write_output(output_data, file_path):
    """
