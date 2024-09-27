@@ -338,9 +338,29 @@ These metrics collectively provide insights into the quality and security of ope
 The information for these metrics is extracted from the following paper:
 T. Lee, H. Park, and H. Lee, "AutoMetric: Towards Measuring Open-Source Software Quality Metrics Automatically," 2023 IEEE/ACM International Conference on Automation of Software Test (AST), Melbourne, Australia, 2023, pp. 47-55, doi: 10.1109/AST58925.2023.00009.
 
-3. **Output**:
-	- Extracted metadata is stored in an output JSON file (`output.json`), facilitating easy access and analysis.
+## Output:
+ - Extracted metadata is stored in an output JSON file (`output.json`), facilitating easy access and analysis. An example of the output is shown below:
 
+```json
+[
+    {
+        "Repository Name": "BrenoFariasdaSilva/AutoMetric",
+        "Number of Contributors": 2,
+        "MTTU": "n/a",
+        "MTTC": 10.919354838709678,
+        "Branch Protection": false,
+        "Inactive Period": 0
+    },
+    {
+        "Repository Name": "BrenoFariasdaSilva/Worked-Example-Miner",
+        "Number of Contributors": 2,
+        "MTTU": "n/a",
+        "MTTC": 0.28421052631578947,
+        "Branch Protection": false,
+        "Inactive Period": 0
+    }
+]
+```
 Overall, the `AutoMetric` program successfully automates the collection of important repository metrics, enabling users to gain insights into the state of their projects with minimal manual effort.
 
 ## Contributing
