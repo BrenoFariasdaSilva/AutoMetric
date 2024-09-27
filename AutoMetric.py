@@ -38,14 +38,14 @@ def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
 
    # Verify if the .env file exists
    if not os.path.exists(env_path):
-      print(f"The {env_path} file does not exist.") # Print an error message
+      print(f"{BackgroundColors.RED}The {BackgroundColors.GREEN}{env_path}{BackgroundColors.RED} file does not exist.{Style.RESET_ALL}") # Print an error message
       sys.exit(1) # Exit the program
 
    load_dotenv(env_path) # Load the .env file
    api_key = os.getenv(key) # Get the value of the key
 
    if not api_key: # If the key does not exist
-      print(f"The {key} key does not exist in the {env_path} file.") # Print an error message
+      print(f"{BackgroundColors.RED}The {BackgroundColors.GREEN}{key}{BackgroundColors.RED} key does not exist in the {BackgroundColors.GREEN}{env_path}{BackgroundColors.RED} file.{Style.RESET_ALL}") # Print an error message
       sys.exit(1) # Exit the program
 
    return api_key # Return the value of the key
@@ -134,7 +134,7 @@ def process_github_repository(repo_path, githubToken):
          "Inactive Period": ip # Return the inactive period
       }
    except Exception as e: # If an exception occurs
-      print(f"Error processing GitHub repository {repo_path}: {e}") # Output the error message
+      print(f"{BackgroundColors.RED}Error processing GitHub repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
 def process_gitlab_repository(domain, repo_path):
@@ -175,7 +175,7 @@ def process_gitlab_repository(domain, repo_path):
          "Inactive Period": ip # Return the inactive period
       }
    except Exception as e: # If an exception occurs
-      print(f"Error processing GitLab repository {repo_path}: {e}") # Output the error message
+      print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
 def process_repository(repo_url, githubToken):
@@ -188,14 +188,14 @@ def process_repository(repo_url, githubToken):
    """
 
    domain, org, project_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
-   print(f"Processing {domain}/{repo_path}...") # Output the processing message
+   print(f"{BackgroundColors.GREEN}Processing {BackgroundColors.CYAN}{domain}/{repo_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the processing message
 
    if domain == "github.com": # If the domain is GitHub
       return process_github_repository(repo_path, githubToken) # Process the GitHub repository
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
       return process_gitlab_repository(domain, repo_path) # Process the GitLab repository
    else: # If the domain is not supported
-      print(f"Unsupported domain: {domain}") # Output the unsupported domain message
+      print(f"{BackgroundColors.GREEN}Unsupported domain: {BackgroundColors.CYAN}{domain}{Style.RESET_ALL}") # Output the unsupported domain message
       return None # Return None
 
 def write_output(output_data, file_path):
@@ -217,15 +217,15 @@ def main(repo_urls=None):
    :return: None
    """
 
-   print(f"Welcome to the AutoMetric program!") # Output the welcome message
+   print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
 
    if repo_urls: # If repository URLs are provided as arguments
-      print(f"Processing the provided list of repositories as arguments and writing output to {OUTPUT_FILE}.")
-      print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
+      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
    else: # If no arguments are provided, read from the input file
-      print(f"Processing repositories from the input file {INPUT_FILE} and writing output to {OUTPUT_FILE}.")
-      print(f"The output will contain the following metrics: Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period.")
+      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
       repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
+
+   print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}")   
 
    githubToken = verify_env_file() # Verify the .env file and get the GitHub token
 
@@ -238,7 +238,7 @@ def main(repo_urls=None):
          output.append(repo_data) # Append the repository data to the output list
 
    write_output(output, OUTPUT_FILE) # Write the output to a file
-   print(f"\nProgram finished.") # Output the end of the program message
+   print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
 if __name__ == "__main__":
    """
