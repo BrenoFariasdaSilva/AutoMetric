@@ -13,7 +13,8 @@
 **AutoMetric** is an enhanced tool that automates the extraction of metadata from GitHub and GitLab repositories, providing comprehensive insights into Open-Source Software (OSS) quality metrics. This project is a fork of [AutoMetric](https://github.com/HckEX/AutoMetric), incorporating substantial enhancements, including:
 
 - Improved **AutoMetric.py** code quality.
-- Execution arguments for handling different ways of input.
+- Execution parameters for managing various input methods.
+- Environment configuration file to eliminate hardcoded GitHub tokens.
 - Virtual environments for isolated package management.
 - Makefiles for easy execution.
 - Detailed code comments and documentation for better understanding.
