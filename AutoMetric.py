@@ -190,12 +190,13 @@ def process_github_repository(repo_path, githubToken):
       ip = get_inactive_period_github(repo, now) # Inactive Period (IP)
 
       return { # Return the repository metadata dictionary
-         "Repository Name": repo_path, # Add repository name as the first element
-         "Number of Contributors": nc, # Return the number of contributors
-         "MTTU": mttu, # Return the mean time to update
-         "MTTC": mttc, # Return the mean time to commit
-         "Branch Protection": branch_protection, # Return the branch protection status
-         "Inactive Period": ip # Return the inactive period
+         "Repository Name": repo_path, # Add the repository name
+         "Repository URL": repo.html_url, # Add the repository URL
+         "Number of Contributors": nc, # Add the number of contributors
+         "MTTU": mttu, # Add the mean time to update
+         "MTTC": mttc, # Add the mean time to commit
+         "Branch Protection": branch_protection, # Add the branch protection status
+         "Inactive Period": ip # Add the inactive period
       }
    except Exception as e: # If an exception occurs
       print(f"{BackgroundColors.RED}Error processing GitHub repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
@@ -290,12 +291,13 @@ def process_gitlab_repository(domain, repo_path):
       ip = calculate_inactive_period_gitlab(default_branch, now) # Inactive Period (IP)
 
       return { # Return the repository metadata dictionary
-         "Repository Name": repo_path, # Add repository name as the first element
-         "Number of Contributors": nc, # Return the number of contributors
-         "MTTU": "n/a", # GitLab doesn't support releases as in GitHub
-         "MTTC": "n/a", # GitLab doesn't directly provide this info
-         "Branch Protection": branch_protection, # Return the branch protection status
-         "Inactive Period": ip # Return the inactive period
+         "Repository Name": repo_path, # Add the repository name to the dictionary
+         "Repository URL": project.web_url, # Add the repository URL to the dictionary
+         "Number of Contributors": nc, # Add the number of contributors to the dictionary
+         "MTTU": "n/a", # Add "n/a" as GitLab doesn't support releases as in GitHub
+         "MTTC": "n/a", # Add "n/a" as GitLab doesn't directly provide this info
+         "Branch Protection": branch_protection, # Add the branch protection status to the dictionary
+         "Inactive Period": ip # Add the inactive period to the dictionary
       }
    except Exception as e: # If an exception occurs
       print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
