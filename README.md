@@ -109,6 +109,44 @@ Great, you now have python3 and pip installed. Now, you need to clone the reposi
 make dependencies
 ```
 
+This project depends on the following libraries:
+
+- [Git](https://git-scm.com/)  
+  Git is used to clone repositories and perform operations such as switching branches. It is a critical dependency for the code execution. As the installation process varies depending on the operating system, please refer to the official Git documentation for detailed instructions on how to install it on your machine. You can typically install it using the package manager of your operating system, such as `sudo apt install git -y` in Linux, `brew install git` in macOS, and `choco install git` in Windows.
+
+- [GitHub API for Python](https://pygithub.readthedocs.io/en/latest/)  
+  This library is used to interact with GitHub repositories programmatically, allowing you to fetch repository information and manipulate data efficiently.
+
+- [GitLab API for Python](https://python-gitlab.readthedocs.io/en/stable/)  
+  Similar to the GitHub library, this dependency allows interaction with GitLab repositories, providing functionalities to manage repositories and their metadata.
+
+- [Colorama](https://pypi.org/project/colorama/)  
+  Colorama is used for coloring the terminal output, enhancing the visual appeal and readability of log messages.
+
+- [Python Dotenv](https://pypi.org/project/python-dotenv/)  
+  This library loads environment variables from a `.env` file, making it easier to manage configuration settings.
+
+- [JSON](https://docs.python.org/3/library/json.html)  
+  The built-in JSON module is utilized to parse and manipulate JSON data, facilitating communication with APIs.
+
+- [TQDM](https://tqdm.github.io/)  
+  TQDM is employed to display progress bars for long-running operations, enhancing the user experience.
+
+- [Datetime](https://docs.python.org/3/library/datetime.html)  
+  This built-in module provides classes for manipulating dates and times, crucial for timestamping commits and logs.
+
+- [Argparse](https://docs.python.org/3/library/argparse.html)  
+  Argparse is used for parsing command-line arguments, enabling flexible input configurations for the scripts.
+
+- [OS](https://docs.python.org/3/library/os.html)  
+  The OS module provides functions for interacting with the operating system, such as running terminal commands.
+
+- [Platform](https://docs.python.org/3/library/platform.html)  
+  This module is used to determine the underlying platform on which the code is running, allowing for platform-specific operations.
+
+- [Sys](https://docs.python.org/3/library/sys.html)  
+  The Sys module provides access to some variables used or maintained by the interpreter and to functions that interact with the interpreter.
+
 ## Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**. If you have suggestions for improving the code, your insights will be highly welcome. Please follow these guidelines to make your contributions smooth and effective:
