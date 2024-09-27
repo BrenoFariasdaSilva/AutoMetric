@@ -260,7 +260,8 @@ def main(repo_urls=None):
          repo_data["name"] = repo_name # Add the repository name to the data
          output.append(repo_data) # Append the repository data to the output list
 
-   write_output(output, OUTPUT_FILE) # Write the output to a file
+   if output: # If the output list is not empty
+      write_output(output, OUTPUT_FILE) # Write the output to a file
    print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
 if __name__ == "__main__":
