@@ -148,6 +148,7 @@ def process_github_repository(repo_path, githubToken):
          ip = "n/a" # Set the inactive period to "n/a"
 
       return { # Return the repository metadata dictionary
+         "Repository Name": repo_path, # Add repository name as the first element
          "Number of Contributors": nc, # Return the number of contributors
          "MTTU": mttu, # Return the mean time to update
          "MTTC": mttc, # Return the mean time to commit
@@ -189,6 +190,7 @@ def process_gitlab_repository(domain, repo_path):
       ip = (now - latest_commit_date).days # Calculate the inactive period
 
       return {
+         "Repository Name": repo_path, # Add repository name as the first element
          "Number of Contributors": nc, # Return the number of contributors
          "MTTU": "n/a", # GitLab doesn't support releases as in GitHub
          "MTTC": "n/a", # GitLab doesn't directly provide this info
@@ -274,8 +276,6 @@ def main(repo_urls=None):
    for repo_url in repo_urls: # Iterate over the repository URLs
       repo_data = process_repository(repo_url, githubToken) # Process the repository
       if repo_data: # If the repository data is not None
-         repo_name = repo_url.split("/")[-1] # Get the repository name from the URL
-         repo_data["name"] = repo_name # Add the repository name to the data
          output.append(repo_data) # Append the repository data to the output list
 
    if output: # If the output list is not empty
