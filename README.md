@@ -41,6 +41,9 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
     - [Clone the repository](#clone-the-repository)
     - [Dependencies](#dependencies)
     - [Virtual Environment](#virtual-environment)
+    - [Setup of the .env File](#setup-of-the-env-file)
+      - [Creating the .env File](#creating-the-env-file)
+      - [Example](#example)
     - [Using the Makefile](#using-the-makefile)
   - [Run AutoMetric.py](#run-autometricpy)
     - [Using the Makefile](#using-the-makefile-1)
@@ -160,6 +163,34 @@ This project depends on the following libraries:
 ### Virtual Environment
 
 Furthermore, this project requires a virtual environment to ensure all dependencies are installed and managed in an isolated manner. A virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, along with a number of additional packages. Using a virtual environment helps avoid conflicts between project dependencies and system-wide Python packages.
+
+### Setup of the .env File
+
+To run this project, you need to create a `.env` file that contains the necessary environment variables. This file will hold sensitive information such as your GitHub token, which is required for authentication when accessing GitHub APIs.
+
+#### Creating the .env File
+
+1. **Create the `.env` File**: In the root directory of your project, create a new file named `.env`. You can do this using any text editor or by running the following command in your terminal:
+
+  ```bash
+  touch .env
+  ```
+
+2. **Fill the .env File**: Open the `.env` file in your text editor and add the following line, replacing `YOUR_GITHUB_TOKEN` with your actual GitHub token:
+
+  ```plaintext
+  GITHUB_TOKEN=YOUR_GITHUB_TOKEN
+  ```
+
+#### Example
+
+Your `.env` file should look like this:
+
+```plaintext
+GITHUB_TOKEN=ghp_XXXXXXXXXXXXXXXXXXXXXXXXXXXX
+```
+
+By following these steps, you will set up the `.env` file correctly, allowing your project to access the necessary environment variables.
 
 ### Using the Makefile
 
