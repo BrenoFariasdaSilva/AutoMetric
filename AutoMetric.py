@@ -226,9 +226,13 @@ def write_output(output_data, file_path):
    :param output_data: List of dictionaries containing repository metadata
    :param file_path: Path to the output JSON file
    """
+   
+   print(f"{BackgroundColors.GREEN}Writing output to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the writing message
 
    with open(file_path, "w") as file: # Open the output file
       json.dump(output_data, file, indent=4) # Write the output data to the file
+      
+   print(f"{BackgroundColors.GREEN}Output written to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}") # Output the written message
 
 atexit.register(play_sound) # Register the function to play a sound when the program finishes
 
