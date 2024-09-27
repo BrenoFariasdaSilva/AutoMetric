@@ -417,8 +417,8 @@ def main(repo_urls=None):
       if repo_data: # If the repository data is not None
          output.append(repo_data) # Append the repository data to the output list
 
-   if output: # If the output list is not empty
-      write_output(output, OUTPUT_FILE) # Write the output to a file
+   write_output(output, OUTPUT_FILE) # Write the output to a file
+
    print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
 if __name__ == "__main__":
