@@ -201,6 +201,41 @@ def process_gitlab_repository(domain, repo_path):
       print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
+def convert_days_to_appropriate_time(days):
+   """
+   Converts the days to an appropriate time format.
+   
+   :param days: Number of days (can be a string)
+   :return: String with the time format or an error message
+   """
+   
+   # Check if days is a valid number (float or int)
+   try: # Try to convert days to float
+      days = float(days) # Convert days to float
+   except ValueError:
+      return days # Return the days as a string
+
+   if days < 1: # If the days are less than 1
+      return f"{days * 24:.2f} hours" # Return the hours
+   elif days < 30: # If the days are less than 30
+      whole_days = int(days) # Whole days
+      hours = (days - whole_days) * 24 # Convert decimal part to hours
+      hours_str = f", {hours:.2f} hour{'s' if hours != 1 else ''}" if hours > 0 else ''
+      return f"{whole_days} day{'s' if whole_days != 1 else ''}{hours_str}" if whole_days > 0 else f"{hours:.2f} hours"
+   elif days < 365: # If the days are less than 365
+      months = int(days // 30) # Whole months
+      leftover_days = days % 30 # Decimal part converted to days
+      days_str = f", {leftover_days:.0f} day{'s' if leftover_days != 1 else ''}" if leftover_days > 0 else ''
+      return f"{months} month{'s' if months != 1 else ''}{days_str}"
+   else: # If the days are more than 365
+      years = int(days // 365) # Whole years
+      leftover_months = (days % 365) / 30 # Decimal part converted to months
+      months = int(leftover_months)
+      leftover_days = (leftover_months - months) * 30
+      months_str = f", {months} month{'s' if months != 1 else ''}" if months > 0 else ''
+      days_str = f", {leftover_days:.0f} day{'s' if leftover_days != 1 else ''}" if leftover_days > 0 else ''
+      return f"{years} year{'s' if years != 1 else ''}{months_str}{days_str}"
+
 def print_repository_metrics(metadata):
    """
    Prints the repository metadata.
