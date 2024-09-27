@@ -42,6 +42,12 @@ Welcome to the **AutoMetric** program! This tool automates the extraction of met
 		- [Dependencies](#dependencies)
 		- [Virtual Environment](#virtual-environment)
 		- [Using the Makefile](#using-the-makefile)
+	- [Run AutoMetric.py](#run-autometricpy)
+		- [Using the Makefile](#using-the-makefile-1)
+			- [With Execution Arguments](#with-execution-arguments)
+			- [Wiithout the Execution Arguments](#wiithout-the-execution-arguments)
+		- [Without Using the Makefile](#without-using-the-makefile)
+			- [Input File Example](#input-file-example)
 	- [Contributing](#contributing)
 		- [Step 1: Set Up Your Environment](#step-1-set-up-your-environment)
 		- [Step 2: Make Your Changes](#step-2-make-your-changes)
@@ -212,6 +218,52 @@ Follow these steps to prepare your environment:
 	```
 
 	This command removes the `venv` directory and deletes any cached Python files in the project directory, helping maintain a clean workspace.
+
+## Run AutoMetric.py
+
+In this project, we developed a Python script named `AutoMetric.py` designed to extract metadata from repositories hosted on GitHub and GitLab. The following results were obtained from the implementation:
+
+1. **Input**:
+   - The script reads a list of repository URLs from an input file (`input.txt`) or accepts them as command-line arguments.
+
+### Using the Makefile
+
+#### With Execution Arguments
+
+To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Use the following command:
+
+```bash
+make auto_metric_script args="--repos https://github.com/username/repository1 https://gitlab.com/username/repository2"
+```
+
+#### Wiithout the Execution Arguments
+
+```bash
+make auto_metric_script
+```
+
+This command executes the script using the Python interpreter and packages installed in the venv directory, as specified in the Makefile. Ensure that the input.txt file is present in the project directory.
+
+### Without Using the Makefile
+
+You can also run the `AutoMetric.py` script directly using the Python interpreter without the Makefile. For example:
+
+```bash
+python3 ./AutoMetric.py --repos "https://github.com/username/repository1" "https://gitlab.com/username/repository2"
+```
+
+In this case, replace username and repository with the actual GitHub or GitLab usernames and repository names. This command allows you to provide repository URLs directly as command-line arguments.
+
+#### Input File Example
+
+If you choose to use an input file (`input.txt`), ensure that it is formatted with one repository URL per line, such as:
+
+```
+https://github.com/username/repository1
+https://gitlab.com/username/repository2
+```
+
+This will allow the script to read all listed repositories during execution
 
 ## Contributing
 

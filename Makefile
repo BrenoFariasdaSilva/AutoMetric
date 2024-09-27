@@ -7,7 +7,7 @@ PIP := $(VENV)/bin/pip
 
 # Main Scripts:
 auto_metric_script: $(VENV)
-	clear; time $(PYTHON) ./AutoMetric.py
+	clear; time $(PYTHON) ./AutoMetric.py $(args)
 
 # Define the main target that runs the scripts in the specified order and waits for the previous one to finish before starting the next one
 all: dependencies auto_metric_script
