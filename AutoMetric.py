@@ -14,6 +14,7 @@ from urllib import parse # Import the parse module from the urllib package
 # Global variables
 INPUT_FILE = "input.txt" # The input file with repository URLs
 OUTPUT_DIR = "output/" # The output directory
+FORMAT_METRICS = True # Format the metrics to the appropriate time format and not just days
 
 # .Env Constants:
 ENV_PATH = "./.env" # The path to the .env file
@@ -122,6 +123,43 @@ def get_number_of_contributors_github(repo):
    contributors = repo.get_contributors() # Get the contributors
    return contributors.totalCount # Get the total number of contributors
 
+def convert_days_to_appropriate_time(days):
+   """
+   Converts the days to an appropriate time format.
+   
+   :param days: Number of days (can be a string)
+   :return: String with the time format or an error message
+   """
+
+   # Verify if the days is a string
+   try: # Try to convert the days to a float
+      days = float(days) # Convert days to float
+   except ValueError: # If the days cannot be converted to a float
+      return days  # Return the days as a string
+
+   # Define time units in days
+   time_units = [
+      (365, "year", "years"),
+      (30, "month", "months"),
+      (1, "day", "days"),
+      (1/24, "hour", "hours"),
+   ]
+
+   time_components = [] # Initialize the time components list
+
+   # Handle time conversion based on the value of days
+   for unit_value, singular, plural in time_units: # Iterate over the time units
+      if days >= unit_value: # If days is greater than or equal to the unit value
+         unit_count = int(days // unit_value) # Calculate the unit count
+         time_components.append(f"{unit_count} {singular if unit_count == 1 else plural}") # Append the time component
+         days %= unit_value # Update days to the remainder
+
+   # Handle hours separately for cases where days < 1
+   if days < 1 and len(time_components) == 0: # If days is less than 1 and there are no time components
+      return f"{days * 24:.2f} hours" # Return hours if less than 1 day
+
+   return ", ".join(time_components) # Join all time components for final output
+
 def calculate_mttu_github(repo, now):
    """
    Calculate the Mean Time to Update (MTTU).
@@ -135,7 +173,8 @@ def calculate_mttu_github(repo, now):
    if releases.totalCount > 0: # If there are releases
       first_release = releases.get_page(releases.totalCount // 30)[-1] # Get the first release
       days_since_first_release = (now - first_release.created_at).days # Calculate the days since the first release
-      return days_since_first_release / releases.totalCount # Calculate the mean time to update
+      mttu = days_since_first_release / releases.totalCount # Calculate the mean time to update
+      return convert_days_to_appropriate_time(mttu) if FORMAT_METRICS else mttu # Return the mean time to update
    return "n/a" # Set the mean time to update to "n/a"
 
 def calculate_mttc_github(repo, now):
@@ -151,7 +190,8 @@ def calculate_mttc_github(repo, now):
    if commits.totalCount > 0: # If there are commits
       first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
       days_since_first_commit = (now - first_commit.commit.author.date.replace(tzinfo=timezone.utc)).days # Calculate the days since the first commit
-      return days_since_first_commit / commits.totalCount # Calculate the mean time to commit
+      mttc = days_since_first_commit / commits.totalCount # Calculate the mean time to commit
+      return convert_days_to_appropriate_time(mttc) if FORMAT_METRICS else mttc # Return the mean time to commit
    return "n/a" # Set the mean time to commit to "n/a"
 
 def get_branch_protection_github(repo):
@@ -315,41 +355,6 @@ def process_gitlab_repository(domain, repo_path):
       print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
       return None # Return None
 
-def convert_days_to_appropriate_time(days):
-   """
-   Converts the days to an appropriate time format.
-   
-   :param days: Number of days (can be a string)
-   :return: String with the time format or an error message
-   """
-   
-   # Check if days is a valid number (float or int)
-   try: # Try to convert days to float
-      days = float(days) # Convert days to float
-   except ValueError:
-      return days # Return the days as a string
-
-   if days < 1: # If the days are less than 1
-      return f"{days * 24:.2f} hours" # Return the hours
-   elif days < 30: # If the days are less than 30
-      whole_days = int(days) # Whole days
-      hours = (days - whole_days) * 24 # Convert decimal part to hours
-      hours_str = f", {hours:.2f} hour{'s' if hours != 1 else ''}" if hours > 0 else ''
-      return f"{whole_days} day{'s' if whole_days != 1 else ''}{hours_str}" if whole_days > 0 else f"{hours:.2f} hours"
-   elif days < 365: # If the days are less than 365
-      months = int(days // 30) # Whole months
-      leftover_days = days % 30 # Decimal part converted to days
-      days_str = f", {leftover_days:.0f} day{'s' if leftover_days != 1 else ''}" if leftover_days > 0 else ''
-      return f"{months} month{'s' if months != 1 else ''}{days_str}"
-   else: # If the days are more than 365
-      years = int(days // 365) # Whole years
-      leftover_months = (days % 365) / 30 # Decimal part converted to months
-      months = int(leftover_months)
-      leftover_days = (leftover_months - months) * 30
-      months_str = f", {months} month{'s' if months != 1 else ''}" if months > 0 else ''
-      days_str = f", {leftover_days:.0f} day{'s' if leftover_days != 1 else ''}" if leftover_days > 0 else ''
-      return f"{years} year{'s' if years != 1 else ''}{months_str}{days_str}"
-
 def print_repository_metrics(metadata):
    """
    Prints the repository metadata.
@@ -359,10 +364,10 @@ def print_repository_metrics(metadata):
 
    print(f"{BackgroundColors.CYAN}{metadata['Repository Name']}{Style.RESET_ALL}", end=": ") # Output the repository name
    print(f"{BackgroundColors.GREEN}Number of Contributors: {BackgroundColors.CYAN}{metadata['Number of Contributors']}{Style.RESET_ALL}", end=", ") # Output the number of contributors
-   print(f"{BackgroundColors.GREEN}MTTU: {BackgroundColors.CYAN}{BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['MTTU'])}{Style.RESET_ALL}", end=", ") # Output the mean time to update
-   print(f"{BackgroundColors.GREEN}MTTC: {BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['MTTC'])}{Style.RESET_ALL}", end=", ") # Output the mean time to commit
+   print(f"{BackgroundColors.GREEN}MTTU: {BackgroundColors.CYAN}{BackgroundColors.CYAN}{metadata['MTTU']}{Style.RESET_ALL}", end=", ") # Output the mean time to update
+   print(f"{BackgroundColors.GREEN}MTTC: {BackgroundColors.CYAN}{metadata['MTTC']}{Style.RESET_ALL}", end=", ") # Output the mean time to commit
    print(f"{BackgroundColors.GREEN}Branch Protection: {BackgroundColors.CYAN}{metadata['Branch Protection']}{Style.RESET_ALL}", end=", ") # Output the branch protection status
-   print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['Inactive Period'])}{Style.RESET_ALL}", end="\n\n") # Output the inactive period
+   print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{metadata['Inactive Period']}{Style.RESET_ALL}", end="\n\n") # Output the inactive period
 
 def process_repository(repo_url, github_token):
    """
