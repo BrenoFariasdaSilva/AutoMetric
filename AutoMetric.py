@@ -169,16 +169,16 @@ def get_inactive_period_github(repo, now):
    except Exception: # If an exception occurs
       return "n/a" # Set the inactive period to "n/a"
 
-def process_github_repository(repo_path, githubToken):
+def process_github_repository(repo_path, github_token):
    """
    Processes a GitHub repository to extract its metadata.
 
    :param repo_path: GitHub repository path (org/repo)
-   :param githubToken: GitHub token for API access
+   :param github_token: GitHub token for API access
    :return: Dictionary with repository metadata
    """
 
-   github = Github(githubToken) # Create a GitHub instance
+   github = Github(github_token) # Create a GitHub instance
    try: # Try to process the GitHub repository
       repo = github.get_repo(repo_path) # Get the GitHub repository
       now = datetime.now(timezone.utc) # Get the current date and time
@@ -350,12 +350,12 @@ def print_repository_metrics(metadata):
    print(f"{BackgroundColors.GREEN}Branch Protection: {BackgroundColors.CYAN}{metadata['Branch Protection']}{Style.RESET_ALL}", end=", ") # Output the branch protection status
    print(f"{BackgroundColors.GREEN}Inactive Period: {BackgroundColors.CYAN}{convert_days_to_appropriate_time(metadata['Inactive Period'])}{Style.RESET_ALL}", end="\n\n") # Output the inactive period
 
-def process_repository(repo_url, githubToken):
+def process_repository(repo_url, github_token):
    """
    Determines the repository hosting service (GitHub or GitLab) and processes the repository accordingly.
    
    :param repo_url: Full repository URL
-   :param githubToken: GitHub token for API access
+   :param github_token: GitHub token for API access
    :return: Dictionary containing processed repository metadata
    """
 
@@ -363,7 +363,7 @@ def process_repository(repo_url, githubToken):
    print(f"{BackgroundColors.GREEN}Processing {BackgroundColors.CYAN}{domain}/{repo_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the processing message
 
    if domain == "github.com": # If the domain is GitHub
-      metrics = process_github_repository(repo_path, githubToken) # Process the GitHub repository
+      metrics = process_github_repository(repo_path, github_token) # Process the GitHub repository
    elif domain in ["salsa.debian.org", "gitlab.freedesktop.org"]: # If the domain is GitLab
       metrics = process_gitlab_repository(domain, repo_path) # Process the GitLab repository
    else: # If the domain is not supported
@@ -389,12 +389,12 @@ def write_output(output_data, file_path):
       
    print(f"{BackgroundColors.GREEN}Output written to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}") # Output the written message
 
-def main(repo_urls=None, githubToken=None, finish_sound=False):
+def main(repo_urls=None, github_token=None, finish_sound=False):
    """
    Main function.
 
    :param repo_urls: list - Optional list of repository URLs passed as arguments.
-   :param githubToken: str - Optional GitHub token passed as an argument.
+   :param github_token: str - Optional GitHub token passed as an argument.
    :param finish_sound: bool - Optional flag to play a sound when the program finishes.
    :return: None
    """
@@ -409,11 +409,11 @@ def main(repo_urls=None, githubToken=None, finish_sound=False):
 
    print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")   
 
-   githubToken = verify_env_file() if not githubToken else githubToken # Verify the .env file and get the GitHub token
+   github_token = verify_env_file() if not github_token else github_token # Verify the .env file and get the GitHub token
 
    output = [] # Initialize the output list
    for repo_url in repo_urls: # Iterate over the repository URLs
-      repo_data = process_repository(repo_url, githubToken) # Process the repository
+      repo_data = process_repository(repo_url, github_token) # Process the repository
       if repo_data: # If the repository data is not None
          output.append(repo_data) # Append the repository data to the output list
 
@@ -437,4 +437,4 @@ if __name__ == "__main__":
 
    args = parser.parse_args() # Parse arguments
 
-   main(repo_urls=args.repo_urls, githubToken=args.github_token, finish_sound=args.finish_sound) # Call main with the arguments
+   main(repo_urls=args.repo_urls, github_token=args.github_token, finish_sound=args.finish_sound) # Call main with the arguments
