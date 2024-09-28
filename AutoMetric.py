@@ -48,6 +48,24 @@ def play_sound():
    else: # If the sound file does not exist
       print(f"{BackgroundColors.RED}Sound file {BackgroundColors.CYAN}{SOUND_FILE}{BackgroundColors.RED} not found. Make sure the file exists.{Style.RESET_ALL}")
 
+def build_output_file_path(repo_urls):
+	"""
+	Builds the output file path.
+
+	:param repo_urls: The list of repository URLs.
+	:return: The output file path.
+	"""
+
+	output_filename = OUTPUT_FILE # Set the output file name
+ 
+	if repo_urls and len(repo_urls) > 1: # If there are multiple repository URLs
+		output_filename += "repositories_metrics.json" # Set the output file name to repositories_metrics.json
+	else: # If there is only one repository URL
+		domain, repo_owner, repo_name, repo_path = parse_repository_url(repo_urls)
+		output_filename += f"{repo_owner}-{repo_name}.json"
+
+	return output_filename # Return the output file path
+
 def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
    """
    Verify if the .env file exists and if the desired key is present.
