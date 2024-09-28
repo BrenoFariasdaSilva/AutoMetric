@@ -33,20 +33,31 @@ class BackgroundColors: # Colors for the terminal
 SOUND_COMMANDS = {"Darwin": "afplay", "Linux": "aplay", "Windows": "start"} # The commands to play a sound for each operating system
 SOUND_FILE = "./.assets/Sounds/NotificationSound.wav" # The path to the sound file
 
-def play_sound():
+def read_input_file(file_path):
    """
-   Plays a sound when the program finishes.
-
-   :return: None
+   Reads input from a file and returns a list of repository URLs.
+   
+   :param file_path: Path to the input file
+   :return: List of repository URLs
    """
 
-   if os.path.exists(SOUND_FILE):
-      if platform.system() in SOUND_COMMANDS: # If the platform.system() is in the SOUND_COMMANDS dictionary
-         os.system(f"{SOUND_COMMANDS[platform.system()]} {SOUND_FILE}")
-      else: # If the platform.system() is not in the SOUND_COMMANDS dictionary
-         print(f"{BackgroundColors.RED}The {BackgroundColors.CYAN}platform.system(){BackgroundColors.RED} is not in the {BackgroundColors.CYAN}SOUND_COMMANDS dictionary{BackgroundColors.RED}. Please add it!{Style.RESET_ALL}")
-   else: # If the sound file does not exist
-      print(f"{BackgroundColors.RED}Sound file {BackgroundColors.CYAN}{SOUND_FILE}{BackgroundColors.RED} not found. Make sure the file exists.{Style.RESET_ALL}")
+   with open(file_path, "r") as file: # Open the input
+      return [line.strip() for line in file if line.strip()] # Return the list of repository URLs
+
+def parse_repository_url(repo_url):
+   """
+   Parses the repository URL to extract domain, owner/organization, and project name.
+   
+   :param repo_url: The full repository URL
+   :return: Tuple containing (domain, owner/organization, project name, repository path)
+   """
+
+   parsed_url = parse.urlparse(repo_url) # Parse the repository URL
+   repo_path = parsed_url.path[1:] # Remove leading slash
+   domain = parsed_url.netloc # Get the domain
+   owner_name = repo_path.split("/")[-2] # Get the owner/organization name
+   repo_name = repo_path.split("/")[-1] # Get the project name
+   return domain, owner_name, repo_name, repo_path # Return the domain, owner/organization, project name, and repository path
 
 def build_output_file_path(repo_urls):
 	"""
@@ -88,32 +99,6 @@ def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
       sys.exit(1) # Exit the program
 
    return api_key # Return the value of the key
-
-def read_input_file(file_path):
-   """
-   Reads input from a file and returns a list of repository URLs.
-   
-   :param file_path: Path to the input file
-   :return: List of repository URLs
-   """
-
-   with open(file_path, "r") as file: # Open the input
-      return [line.strip() for line in file if line.strip()] # Return the list of repository URLs
-
-def parse_repository_url(repo_url):
-   """
-   Parses the repository URL to extract domain, owner/organization, and project name.
-   
-   :param repo_url: The full repository URL
-   :return: Tuple containing (domain, owner/organization, project name, repository path)
-   """
-
-   parsed_url = parse.urlparse(repo_url) # Parse the repository URL
-   repo_path = parsed_url.path[1:] # Remove leading slash
-   domain = parsed_url.netloc # Get the domain
-   owner_name = repo_path.split("/")[-2] # Get the owner/organization name
-   repo_name = repo_path.split("/")[-1] # Get the project name
-   return domain, owner_name, repo_name, repo_path # Return the domain, owner/organization, project name, and repository path
 
 def get_number_of_contributors_github(repo):
    """
@@ -390,7 +375,7 @@ def process_repository(repo_url, github_token):
 
    print_repository_metrics(metrics) if metrics else None # Print the repository metadata
    
-   return metrics  # Return the metrics dictionary
+   return metrics # Return the metrics dictionary
 
 def get_full_directory_path(relative_dir_path):
 	"""
@@ -434,6 +419,21 @@ def write_output(output_data, file_path):
       
    print(f"{BackgroundColors.GREEN}Output written to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}") # Output the written message
 
+def play_sound():
+   """
+   Plays a sound when the program finishes.
+
+   :return: None
+   """
+
+   if os.path.exists(SOUND_FILE):
+      if platform.system() in SOUND_COMMANDS: # If the platform.system() is in the SOUND_COMMANDS dictionary
+         os.system(f"{SOUND_COMMANDS[platform.system()]} {SOUND_FILE}")
+      else: # If the platform.system() is not in the SOUND_COMMANDS dictionary
+         print(f"{BackgroundColors.RED}The {BackgroundColors.CYAN}platform.system(){BackgroundColors.RED} is not in the {BackgroundColors.CYAN}SOUND_COMMANDS dictionary{BackgroundColors.RED}. Please add it!{Style.RESET_ALL}")
+   else: # If the sound file does not exist
+      print(f"{BackgroundColors.RED}Sound file {BackgroundColors.CYAN}{SOUND_FILE}{BackgroundColors.RED} not found. Make sure the file exists.{Style.RESET_ALL}")
+
 def main(repo_urls=None, github_token=None, finish_sound=False):
 	"""
 	Main function.
@@ -447,7 +447,7 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
 	print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
 	print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
 
-	repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
+	repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args where passed
 	output_file_path = build_output_file_path(repo_urls) # Build the output file path
 
 	if len(repo_urls) > 1: # If there are multiple repository URLs
