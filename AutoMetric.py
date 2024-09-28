@@ -403,6 +403,22 @@ def get_full_directory_path(relative_dir_path):
 		
 	return os.path.abspath(relative_dir_path) # Return the full directory path
 
+def create_directory(full_directory_name):
+   """
+   Creates a directory.
+
+   :param full_directory_name: Name of the directory to be created.
+   :param relative_directory_name: Relative name of the directory to be created that will be shown in the terminal.
+   :return: None
+   """
+
+   if os.path.isdir(full_directory_name): # Verify if the directory already exists
+      return # Return if the directory already exists
+   try: # Try to create the directory
+      os.makedirs(full_directory_name) # Create the directory
+   except OSError: # If the directory cannot be created
+      print(f"{BackgroundColors.GREEN}The creation of the {BackgroundColors.CYAN}{full_directory_name}{BackgroundColors.GREEN} directory failed.{Style.RESET_ALL}")
+
 def write_output(output_data, file_path):
    """
    Writes the output data to a JSON file.
