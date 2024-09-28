@@ -190,13 +190,12 @@ def process_github_repository(repo_path, githubToken):
       ip = get_inactive_period_github(repo, now) # Inactive Period (IP)
 
       return { # Return the repository metadata dictionary
-         "Repository Name": repo_path, # Add the repository name
-         "Repository URL": repo.html_url, # Add the repository URL
-         "Number of Contributors": nc, # Add the number of contributors
-         "MTTU": mttu, # Add the mean time to update
-         "MTTC": mttc, # Add the mean time to commit
-         "Branch Protection": branch_protection, # Add the branch protection status
-         "Inactive Period": ip # Add the inactive period
+         "Repository Name": repo_path, # Add repository name as the first element
+         "Number of Contributors": nc, # Return the number of contributors
+         "MTTU": mttu, # Return the mean time to update
+         "MTTC": mttc, # Return the mean time to commit
+         "Branch Protection": branch_protection, # Return the branch protection status
+         "Inactive Period": ip # Return the inactive period
       }
    except Exception as e: # If an exception occurs
       print(f"{BackgroundColors.RED}Error processing GitHub repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
@@ -291,13 +290,12 @@ def process_gitlab_repository(domain, repo_path):
       ip = calculate_inactive_period_gitlab(default_branch, now) # Inactive Period (IP)
 
       return { # Return the repository metadata dictionary
-         "Repository Name": repo_path, # Add the repository name to the dictionary
-         "Repository URL": project.web_url, # Add the repository URL to the dictionary
-         "Number of Contributors": nc, # Add the number of contributors to the dictionary
-         "MTTU": "n/a", # Add "n/a" as GitLab doesn't support releases as in GitHub
-         "MTTC": "n/a", # Add "n/a" as GitLab doesn't directly provide this info
-         "Branch Protection": branch_protection, # Add the branch protection status to the dictionary
-         "Inactive Period": ip # Add the inactive period to the dictionary
+         "Repository Name": repo_path, # Add repository name as the first element
+         "Number of Contributors": nc, # Return the number of contributors
+         "MTTU": "n/a", # GitLab doesn't support releases as in GitHub
+         "MTTC": "n/a", # GitLab doesn't directly provide this info
+         "Branch Protection": branch_protection, # Return the branch protection status
+         "Inactive Period": ip # Return the inactive period
       }
    except Exception as e: # If an exception occurs
       print(f"{BackgroundColors.RED}Error processing GitLab repository {BackgroundColors.GREEN}{repo_path}{BackgroundColors.RED}: {e}{Style.RESET_ALL}") # Output the error message
@@ -393,11 +391,12 @@ def write_output(output_data, file_path):
 
 atexit.register(play_sound) # Register the function to play a sound when the program finishes
 
-def main(repo_urls=None):
+def main(repo_urls=None, githubToken=None):
    """
    Main function.
 
    :param repo_urls: list - Optional list of repository URLs passed as arguments.
+   :param githubToken: str - Optional GitHub token passed as an argument.
    :return: None
    """
 
@@ -411,7 +410,7 @@ def main(repo_urls=None):
 
    print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")   
 
-   githubToken = verify_env_file() # Verify the .env file and get the GitHub token
+   githubToken = verify_env_file() if not githubToken else githubToken # Verify the .env file and get the GitHub token
 
    output = [] # Initialize the output list
    for repo_url in repo_urls: # Iterate over the repository URLs
@@ -432,10 +431,8 @@ if __name__ == "__main__":
 
    parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics") # Create an argument parser
    parser.add_argument("--repos_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an optional argument for repository URLs
+   parser.add_argument("--github_token", help="GitHub Token to access private repositories", default=None) # Add an optional argument for the GitHub token
 
    args = parser.parse_args() # Parse arguments
 
-   if args.repos_urls: # If repository URLs are provided as arguments
-      main(args.repos_urls) # Pass the list of repo URLs to main
-   else: # If no arguments
-      main() # Run without arguments, fall back to input file processing
+   main(repo_urls=args.repos_urls, githubToken=args.github_token) # Call main with both repo_urls and github_token arguments
