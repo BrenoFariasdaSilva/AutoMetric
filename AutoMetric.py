@@ -389,14 +389,13 @@ def write_output(output_data, file_path):
       
    print(f"{BackgroundColors.GREEN}Output written to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}") # Output the written message
 
-atexit.register(play_sound) # Register the function to play a sound when the program finishes
-
-def main(repo_urls=None, githubToken=None):
+def main(repo_urls=None, githubToken=None, finish_sound=False):
    """
    Main function.
 
    :param repo_urls: list - Optional list of repository URLs passed as arguments.
    :param githubToken: str - Optional GitHub token passed as an argument.
+   :param finish_sound: bool - Optional flag to play a sound when the program finishes.
    :return: None
    """
 
@@ -422,6 +421,8 @@ def main(repo_urls=None, githubToken=None):
 
    print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
+   atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
+
 if __name__ == "__main__":
    """
    This is the standard boilerplate that calls the main() function.
@@ -432,7 +433,8 @@ if __name__ == "__main__":
    parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics") # Create an argument parser
    parser.add_argument("--repos_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an optional argument for repository URLs
    parser.add_argument("--github_token", help="GitHub Token to access private repositories", default=None) # Add an optional argument for the GitHub token
+   parser.add_argument("--finish_sound", action="store_true", help="Play a sound when the program finishes", default=False) # Add an optional argument for playing a sound when the program finishes
 
    args = parser.parse_args() # Parse arguments
 
-   main(repo_urls=args.repos_urls, githubToken=args.github_token) # Call main with both repo_urls and github_token arguments
+   main(repo_urls=args.repos_urls, githubToken=args.github_token, finish_sound=args.finish_sound) # Call main with the arguments
