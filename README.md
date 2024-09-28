@@ -239,7 +239,7 @@ Follow these steps to prepare your environment:
    The `makefile` also defines commands to run every script with the virtual environment's Python interpreter. For example, to run the `AutoMetric.py` file, use:
 
    ```
-   make auto_metric_script
+   make
    ```
 
    This ensures that the script runs using the Python interpreter and packages installed in the `venv` directory.
@@ -344,7 +344,7 @@ The information for these metrics is extracted from the following paper:
 T. Lee, H. Park, and H. Lee, "AutoMetric: Towards Measuring Open-Source Software Quality Metrics Automatically," 2023 IEEE/ACM International Conference on Automation of Software Test (AST), Melbourne, Australia, 2023, pp. 47-55, doi: 10.1109/AST58925.2023.00009.
 
 ## Output:
- - Extracted metadata is stored in an output JSON file (`output.json`), facilitating easy access and analysis. An example of the output is shown below:
+ - Extracted metadata is stored in an output JSON file located in the `output/` directory. If multiple repository URLs are provided, the file will be named `repositories_metrics.json`. For a single repository, the file will be named using the owner's name followed by a hyphen and the repository name, such as `owner_name-repo_name.json`, facilitating easy access and analysis. An example of the output is shown below:
 
 ```json
 [
