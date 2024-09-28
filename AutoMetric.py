@@ -72,7 +72,7 @@ def build_output_file_path(repo_urls):
 	if repo_urls and len(repo_urls) > 1: # If there are multiple repository URLs
 		output_filename += "repositories_metrics.json" # Set the output file name to repositories_metrics.json
 	else: # If there is only one repository URL
-		domain, repo_owner, repo_name, repo_path = parse_repository_url(repo_urls)
+		domain, repo_owner, repo_name, repo_path = parse_repository_url(repo_urls[0]) # Parse the repository URL
 		output_filename += f"{repo_owner}-{repo_name}.json"
 
 	return output_filename # Return the output file path
