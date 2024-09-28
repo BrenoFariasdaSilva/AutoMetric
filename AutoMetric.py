@@ -13,7 +13,7 @@ from urllib import parse # Import the parse module from the urllib package
 
 # Global variables
 INPUT_FILE = "input.txt" # The input file with repository URLs
-OUTPUT_FILE = "output.json" # The output file with repository metadata
+OUTPUT_DIR = "output/" # The output directory
 
 # .Env Constants:
 ENV_PATH = "./.env" # The path to the .env file
@@ -56,7 +56,7 @@ def build_output_file_path(repo_urls):
 	:return: The output file path.
 	"""
 
-	output_filename = OUTPUT_FILE # Set the output file name
+	output_filename = OUTPUT_DIR # Set the output file name
  
 	if repo_urls and len(repo_urls) > 1: # If there are multiple repository URLs
 		output_filename += "repositories_metrics.json" # Set the output file name to repositories_metrics.json
@@ -448,7 +448,7 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
 	print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
 
 	repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
-	output_file_path = OUTPUT_FILE # Set the output file path
+	output_file_path = build_output_file_path(repo_urls) # Build the output file path
 
 	if len(repo_urls) > 1: # If there are multiple repository URLs
 		print(f"{BackgroundColors.GREEN}Processing the repositories list and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
@@ -457,13 +457,14 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
 
 	github_token = verify_env_file() if not github_token else github_token # Verify the .env file and get the GitHub token
 
-	output = [] # Initialize the output list
+	metrics = [] # Initialize the output list
 	for repo_url in repo_urls: # Iterate over the repository URLs
 		repo_data = process_repository(repo_url, github_token) # Process the repository
 		if repo_data: # If the repository data is not None
-			output.append(repo_data) # Append the repository data to the output list
+			metrics.append(repo_data) # Append the repository data to the output list
 
-	write_output(output, OUTPUT_FILE) # Write the output to a file
+	create_directory(get_full_directory_path(OUTPUT_DIR)) # Create the output directory
+	write_output(metrics, output_file_path) # Write the output to a file
 
 	print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
