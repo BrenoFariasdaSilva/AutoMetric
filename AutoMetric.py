@@ -390,38 +390,39 @@ def write_output(output_data, file_path):
    print(f"{BackgroundColors.GREEN}Output written to {BackgroundColors.CYAN}{file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}") # Output the written message
 
 def main(repo_urls=None, github_token=None, finish_sound=False):
-   """
-   Main function.
+	"""
+	Main function.
 
-   :param repo_urls: list - Optional list of repository URLs passed as arguments.
-   :param github_token: str - Optional GitHub token passed as an argument.
-   :param finish_sound: bool - Optional flag to play a sound when the program finishes.
-   :return: None
-   """
+	:param repo_urls: list - Optional list of repository URLs passed as arguments.
+	:param github_token: str - Optional GitHub token passed as an argument.
+	:param finish_sound: bool - Optional flag to play a sound when the program finishes.
+	:return: None
+	"""
 
-   print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
+	print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
+	print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
 
-   if repo_urls: # If repository URLs are provided as arguments
-      print(f"{BackgroundColors.GREEN}Processing the provided list of repositories as arguments and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
-   else: # If no arguments are provided, read from the input file
-      print(f"{BackgroundColors.GREEN}Processing repositories from the input file {BackgroundColors.CYAN}{INPUT_FILE}{BackgroundColors.GREEN} and writing output to {BackgroundColors.CYAN}{OUTPUT_FILE}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
-      repo_urls = read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
+	repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args
+	output_file_path = OUTPUT_FILE # Set the output file path
 
-   print(f"{BackgroundColors.GREEN}The output will contain the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN}.{Style.RESET_ALL}\n")   
+	if len(repo_urls) > 1: # If there are multiple repository URLs
+		print(f"{BackgroundColors.GREEN}Processing the repositories list and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
+	else: # If there is only one repository URL
+		print(f"{BackgroundColors.GREEN}Processing the {repo_urls} repository and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
 
-   github_token = verify_env_file() if not github_token else github_token # Verify the .env file and get the GitHub token
+	github_token = verify_env_file() if not github_token else github_token # Verify the .env file and get the GitHub token
 
-   output = [] # Initialize the output list
-   for repo_url in repo_urls: # Iterate over the repository URLs
-      repo_data = process_repository(repo_url, github_token) # Process the repository
-      if repo_data: # If the repository data is not None
-         output.append(repo_data) # Append the repository data to the output list
+	output = [] # Initialize the output list
+	for repo_url in repo_urls: # Iterate over the repository URLs
+		repo_data = process_repository(repo_url, github_token) # Process the repository
+		if repo_data: # If the repository data is not None
+			output.append(repo_data) # Append the repository data to the output list
 
-   write_output(output, OUTPUT_FILE) # Write the output to a file
+	write_output(output, OUTPUT_FILE) # Write the output to a file
 
-   print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
+	print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
-   atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
+	atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
 
 if __name__ == "__main__":
    """
