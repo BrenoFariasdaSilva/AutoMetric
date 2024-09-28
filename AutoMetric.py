@@ -77,6 +77,17 @@ def build_output_file_path(repo_urls):
 
 	return output_filename # Return the output file path
 
+def delete_old_output_file(output_file_path):
+   """
+   Deletes the old output file if it exists.
+   
+   :param output_file_path: Path to the output file
+   :return: None
+   """
+
+   if os.path.exists(output_file_path): # If the output file exists
+      os.remove(output_file_path) # Remove the output file
+
 def get_env_token(env_path=ENV_PATH, key=ENV_VARIABLE):
    """
    Verify if the .env file exists and if the desired key is present.
@@ -435,40 +446,41 @@ def play_sound():
       print(f"{BackgroundColors.RED}Sound file {BackgroundColors.CYAN}{SOUND_FILE}{BackgroundColors.RED} not found. Make sure the file exists.{Style.RESET_ALL}")
 
 def main(repo_urls=None, github_token=None, finish_sound=False):
-	"""
-	Main function.
+   """
+   Main function.
 
-	:param repo_urls: list - Optional list of repository URLs passed as arguments.
-	:param github_token: str - Optional GitHub token passed as an argument.
-	:param finish_sound: bool - Optional flag to play a sound when the program finishes.
-	:return: None
-	"""
+   :param repo_urls: list - Optional list of repository URLs passed as arguments.
+   :param github_token: str - Optional GitHub token passed as an argument.
+   :param finish_sound: bool - Optional flag to play a sound when the program finishes.
+   :return: None
+   """
 
-	print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
-	print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
+   print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
+   print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
 
-	repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args where passed
-	output_file_path = build_output_file_path(repo_urls) # Build the output file path
+   repo_urls = repo_urls if repo_urls else read_input_file(INPUT_FILE) # Read repository URLs from input file if no args where passed
+   output_file_path = build_output_file_path(repo_urls) # Build the output file path
+   delete_old_output_file(output_file_path) # Delete the old output file if it exists
 
-	if len(repo_urls) > 1: # If there are multiple repository URLs
-		print(f"{BackgroundColors.GREEN}Processing the repositories list and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
-	else: # If there is only one repository URL
-		print(f"{BackgroundColors.GREEN}Processing the {repo_urls} repository and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
+   if len(repo_urls) > 1: # If there are multiple repository URLs
+      print(f"{BackgroundColors.GREEN}Processing the repositories list and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
+   else: # If there is only one repository URL
+      print(f"{BackgroundColors.GREEN}Processing the {repo_urls} repository and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
 
-	github_token = get_env_token() if not github_token else github_token # Verify the .env file and get the GitHub token
+   github_token = get_env_token() if not github_token else github_token # Verify the .env file and get the GitHub token
 
-	metrics = [] # Initialize the output list
-	for repo_url in repo_urls: # Iterate over the repository URLs
-		repo_data = process_repository(repo_url, github_token) # Process the repository
-		if repo_data: # If the repository data is not None
-			metrics.append(repo_data) # Append the repository data to the output list
+   metrics = [] # Initialize the output list
+   for repo_url in repo_urls: # Iterate over the repository URLs
+      repo_data = process_repository(repo_url, github_token) # Process the repository
+      if repo_data: # If the repository data is not None
+         metrics.append(repo_data) # Append the repository data to the output list
 
-	create_directory(get_full_directory_path(OUTPUT_DIR)) # Create the output directory
-	write_output(metrics, output_file_path) # Write the output to a file
+   create_directory(get_full_directory_path(OUTPUT_DIR)) # Create the output directory
+   write_output(metrics, output_file_path) # Write the output to a file
 
-	print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
+   print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
-	atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
+   atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
 
 if __name__ == "__main__":
    """
