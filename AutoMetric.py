@@ -431,10 +431,10 @@ if __name__ == "__main__":
    """
 
    parser = argparse.ArgumentParser(description="AutoMetric - Analyze repository metrics") # Create an argument parser
-   parser.add_argument("--repos_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an optional argument for repository URLs
+   parser.add_argument("--repo_urls", nargs="*", help="List of repository URLs to process", default=None) # Add an optional argument for repository URLs
    parser.add_argument("--github_token", help="GitHub Token to access private repositories", default=None) # Add an optional argument for the GitHub token
    parser.add_argument("--finish_sound", action="store_true", help="Play a sound when the program finishes", default=False) # Add an optional argument for playing a sound when the program finishes
 
    args = parser.parse_args() # Parse arguments
 
-   main(repo_urls=args.repos_urls, githubToken=args.github_token, finish_sound=args.finish_sound) # Call main with the arguments
+   main(repo_urls=args.repo_urls, githubToken=args.github_token, finish_sound=args.finish_sound) # Call main with the arguments
