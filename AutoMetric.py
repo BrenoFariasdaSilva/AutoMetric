@@ -102,18 +102,18 @@ def read_input_file(file_path):
 
 def parse_repository_url(repo_url):
    """
-   Parses the repository URL to extract domain, organization, and project name.
+   Parses the repository URL to extract domain, owner/organization, and project name.
    
    :param repo_url: The full repository URL
-   :return: Tuple containing (domain, organization, project name, repository path)
+   :return: Tuple containing (domain, owner/organization, project name, repository path)
    """
 
    parsed_url = parse.urlparse(repo_url) # Parse the repository URL
    repo_path = parsed_url.path[1:] # Remove leading slash
    domain = parsed_url.netloc # Get the domain
-   org_name = repo_path.split("/")[-2] # Get the organization name
-   project_name = repo_path.split("/")[-1] # Get the project name
-   return domain, org_name, project_name, repo_path # Return the domain, organization, project name, and repository path
+   owner_name = repo_path.split("/")[-2] # Get the owner/organization name
+   repo_name = repo_path.split("/")[-1] # Get the project name
+   return domain, owner_name, repo_name, repo_path # Return the domain, owner/organization, project name, and repository path
 
 def get_number_of_contributors_github(repo):
    """
@@ -377,7 +377,7 @@ def process_repository(repo_url, github_token):
    :return: Dictionary containing processed repository metadata
    """
 
-   domain, org, project_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
+   domain, owner_name, repo_name, repo_path = parse_repository_url(repo_url) # Parse the repository URL
    print(f"{BackgroundColors.GREEN}Processing {BackgroundColors.CYAN}{domain}/{repo_path}{BackgroundColors.GREEN}...{Style.RESET_ALL}") # Output the processing message
 
    if domain == "github.com": # If the domain is GitHub
