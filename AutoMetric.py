@@ -77,7 +77,7 @@ def build_output_file_path(repo_urls):
 
 	return output_filename # Return the output file path
 
-def verify_env_file(env_path=ENV_PATH, key=ENV_VARIABLE):
+def get_env_token(env_path=ENV_PATH, key=ENV_VARIABLE):
    """
    Verify if the .env file exists and if the desired key is present.
 
@@ -455,7 +455,7 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
 	else: # If there is only one repository URL
 		print(f"{BackgroundColors.GREEN}Processing the {repo_urls} repository and writing the output to {BackgroundColors.CYAN}{output_file_path}{BackgroundColors.GREEN}.{Style.RESET_ALL}", end="\n\n")
 
-	github_token = verify_env_file() if not github_token else github_token # Verify the .env file and get the GitHub token
+	github_token = get_env_token() if not github_token else github_token # Verify the .env file and get the GitHub token
 
 	metrics = [] # Initialize the output list
 	for repo_url in repo_urls: # Iterate over the repository URLs
