@@ -55,11 +55,12 @@ With **AutoMetric**, you can measure vital OSS quality metrics, including the nu
       - [Creating the .env File](#creating-the-env-file)
       - [Example](#example)
     - [Using the Makefile](#using-the-makefile)
-  - [Run AutoMetric.py](#run-autometricpy)
+  - [How to Run](#how-to-run)
     - [Using the Makefile](#using-the-makefile-1)
       - [With Execution Arguments](#with-execution-arguments)
       - [Without the Execution Arguments](#without-the-execution-arguments)
     - [Without Using the Makefile](#without-using-the-makefile)
+      - [Important Notes:](#important-notes)
       - [Input File Example](#input-file-example)
   - [Metadata Extraction](#metadata-extraction)
     - [Original Text Reference](#original-text-reference)
@@ -263,7 +264,7 @@ Follow these steps to prepare your environment:
 
 	This command removes the `venv` directory and deletes any cached Python files in the project directory, helping maintain a clean workspace.
 
-## Run AutoMetric.py
+## How to Run
 
 In this project, we developed a Python script named `AutoMetric.py` designed to extract metadata from repositories hosted on GitHub and GitLab. The following results were obtained from the implementation:
 
@@ -274,11 +275,13 @@ In this project, we developed a Python script named `AutoMetric.py` designed to 
 
 #### With Execution Arguments
 
-To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Use the following command:
+To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Additionally, you can pass the GitHub token and repository URLs as arguments using the following command:
 
 ```bash
-make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2"
+make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2 --githubToken YOUR_GITHUB_TOKEN"
 ```
+
+Replace `YOUR_GITHUB_TOKEN` with your actual GitHub token. This token is required for authenticating GitHub API requests during the metric analysis process.
 
 #### Without the Execution Arguments
 
@@ -286,25 +289,27 @@ make auto_metric_script args="--repos_urls https://github.com/username/repositor
 make auto_metric_script
 ```
 
-This command executes the script using the Python interpreter and packages installed in the venv directory, as specified in the Makefile. Ensure that the input.txt file is present in the project directory.
+This command executes the script using the Python interpreter and packages installed in the virtual environment, as specified in the Makefile. Ensure that the `input.txt` file is present in the project directory, and the GitHub token is either set in the `.env` file or passed during execution.
 
 ### Without Using the Makefile
 
-Before running the `AutoMetric.py` script, you need to activate the virtual environment where the necessary dependencies are installed. This ensures that all required libraries are available for the script. To do this, you can use the `source` command to activate the virtual environment:
+Before running the `AutoMetric.py` script, you need to activate the virtual environment where the necessary dependencies are installed. This ensures that all required libraries are available for the script. To do this, use the `source` command to activate the virtual environment:
 
 ```bash
 source venv/bin/activate
 ```
 
-Once the virtual environment is activated, you can directly run the AutoMetric.py script using the Python interpreter:
+Once the virtual environment is activated, you can directly run the `AutoMetric.py` script using the Python interpreter. Pass the GitHub token along with the repository URLs:
 
 ```bash
-python3 ./AutoMetric.py --repos_urls "https://github.com/username/repository1" "https://gitlab.com/username/repository2"
+python3 ./AutoMetric.py --repos_urls "https://github.com/username/repository1" "https://gitlab.com/username/repository2" --githubToken YOUR_GITHUB_TOKEN
 ```
 
-In this case, replace `username` and `repository` with the actual GitHub or GitLab usernames and repository names. This command allows you to provide repository URLs directly as command-line arguments.
+In this case, replace `username`, `repository`, and `YOUR_GITHUB_TOKEN` with the actual GitHub/GitLab usernames, repository names, and your GitHub token.
 
-Remember to always activate the virtual environment before running the script to ensure that all dependencies are properly loaded.
+#### Important Notes:
+- If no GitHub token is provided via command-line arguments, the script will check for the token in the `.env` file.
+- Always activate the virtual environment before running the script to ensure that all dependencies are properly loaded.
 
 #### Input File Example
 
