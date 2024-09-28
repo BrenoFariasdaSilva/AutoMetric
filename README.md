@@ -275,13 +275,13 @@ In this project, we developed a Python script named `AutoMetric.py` designed to 
 
 #### With Execution Arguments
 
-To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Additionally, you can pass the GitHub token and repository URLs as arguments using the following command:
+To run the `AutoMetric.py` script with the Makefile, ensure you are in the project directory and have the virtual environment activated. Additionally, you can pass the GitHub token, repository URLs, and optionally, the `finish_sound` flag as arguments using the following command:
 
 ```bash
-make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2 --githubToken YOUR_GITHUB_TOKEN"
+make auto_metric_script args="--repos_urls https://github.com/username/repository1 https://gitlab.com/username/repository2 --githubToken YOUR_GITHUB_TOKEN --finish_sound"
 ```
 
-Replace `YOUR_GITHUB_TOKEN` with your actual GitHub token. This token is required for authenticating GitHub API requests during the metric analysis process.
+Replace `YOUR_GITHUB_TOKEN` with your actual GitHub token. This token is required for authenticating GitHub API requests during the metric analysis process. The `--finish_sound` flag is optional and can be used to play a sound when the script finishes its execution.
 
 #### Without the Execution Arguments
 
@@ -299,10 +299,10 @@ Before running the `AutoMetric.py` script, you need to activate the virtual envi
 source venv/bin/activate
 ```
 
-Once the virtual environment is activated, you can directly run the `AutoMetric.py` script using the Python interpreter. Pass the GitHub token along with the repository URLs:
+Once the virtual environment is activated, you can directly run the `AutoMetric.py` script using the Python interpreter. Pass the GitHub token along with the repository URLs and optionally the `--finish_sound` flag:
 
 ```bash
-python3 ./AutoMetric.py --repos_urls "https://github.com/username/repository1" "https://gitlab.com/username/repository2" --githubToken YOUR_GITHUB_TOKEN
+python3 ./AutoMetric.py --repos_urls "https://github.com/username/repository1" "https://gitlab.com/username/repository2" --githubToken YOUR_GITHUB_TOKEN --finish_sound
 ```
 
 In this case, replace `username`, `repository`, and `YOUR_GITHUB_TOKEN` with the actual GitHub/GitLab usernames, repository names, and your GitHub token.
@@ -310,6 +310,7 @@ In this case, replace `username`, `repository`, and `YOUR_GITHUB_TOKEN` with the
 #### Important Notes:
 - If no GitHub token is provided via command-line arguments, the script will check for the token in the `.env` file.
 - Always activate the virtual environment before running the script to ensure that all dependencies are properly loaded.
+- The `--finish_sound` flag is optional and plays a sound upon the completion of the script.
 
 #### Input File Example
 
