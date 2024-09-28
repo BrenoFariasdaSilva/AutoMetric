@@ -350,24 +350,23 @@ T. Lee, H. Park, and H. Lee, "AutoMetric: Towards Measuring Open-Source Software
 [
     {
         "Repository Name": "BrenoFariasdaSilva/AutoMetric",
-        "Repository URL": "https://github.com/BrenoFariasdaSilva/AutoMetric",
         "Number of Contributors": 2,
         "MTTU": "n/a",
-        "MTTC": 10.257575757575758,
+        "MTTC": "7 days, 14 hours",
         "Branch Protection": false,
         "Inactive Period": 0
     },
     {
         "Repository Name": "BrenoFariasdaSilva/Worked-Example-Miner",
-        "Repository URL": "https://github.com/BrenoFariasdaSilva/Worked-Example-Miner",
         "Number of Contributors": 2,
         "MTTU": "n/a",
-        "MTTC": 0.2840531561461794,
+        "MTTC": "6 hours",
         "Branch Protection": false,
         "Inactive Period": 0
     }
 ]
 ```
+
 Overall, the `AutoMetric` program successfully automates the collection of important repository metrics, enabling users to gain insights into the state of their projects with minimal manual effort.
 
 ## Contributing
