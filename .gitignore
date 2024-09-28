@@ -147,3 +147,4 @@ function.go
 #i/o files
 input.txt
 output.json
+output/
