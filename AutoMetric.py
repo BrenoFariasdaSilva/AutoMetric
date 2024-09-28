@@ -392,6 +392,17 @@ def process_repository(repo_url, github_token):
    
    return metrics  # Return the metrics dictionary
 
+def get_full_directory_path(relative_dir_path):
+	"""
+	Gets the full directory name given a relative directory path.
+
+	:param relative_dir_path: The relative directory path.
+	:return: The full directory path.
+
+	"""
+		
+	return os.path.abspath(relative_dir_path) # Return the full directory path
+
 def write_output(output_data, file_path):
    """
    Writes the output data to a JSON file.
