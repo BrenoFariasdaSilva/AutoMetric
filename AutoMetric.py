@@ -5,6 +5,7 @@ import json # Import the json module
 import os # For running a command in the terminal
 import platform # For getting the operating system name
 import sys # Import the sys module
+import time # Import the time module
 from colorama import Style # For coloring the terminal
 from datetime import datetime, timezone # Import the datetime class from the datetime module
 from dotenv import load_dotenv # For loading environment variables from .env file
@@ -19,6 +20,9 @@ FORMAT_METRICS = True # Format the metrics to the appropriate time format and no
 # .Env Constants:
 ENV_PATH = "./.env" # The path to the .env file
 ENV_VARIABLE = "GITHUB_TOKEN" # The environment variable to load
+
+# Time Constants:
+TIME_UNITS = [60, 3600, 86400] # Seconds in a minute, seconds in an hour, seconds in a day
 
 # Macros:
 class BackgroundColors: # Colors for the terminal
@@ -450,6 +454,31 @@ def play_sound():
    else: # If the sound file does not exist
       print(f"{BackgroundColors.RED}Sound file {BackgroundColors.CYAN}{SOUND_FILE}{BackgroundColors.RED} not found. Make sure the file exists.{Style.RESET_ALL}")
 
+def output_time(output_string, time):
+   """
+   Outputs time, considering the appropriate time unit.
+
+   :param output_string: String to be outputted.
+   :param time: Time to be outputted.
+   :return: None
+   """
+
+   if float(time) < int(TIME_UNITS[0]): # If the time is less than 60 seconds
+      time_unit = "seconds" # Set the time unit to seconds
+      time_value = time # Set the time value to time
+   elif float(time) < float(TIME_UNITS[1]): # If the time is less than 3600 seconds
+      time_unit = "minutes" # Set the time unit to minutes
+      time_value = time / TIME_UNITS[0] # Set the time value to time divided by 60
+   elif float(time) < float(TIME_UNITS[2]): # If the time is less than 86400 seconds
+      time_unit = "hours" # Set the time unit to hours
+      time_value = time / TIME_UNITS[1] # Set the time value to time divided by 3600
+   else: # If the time is greater than or equal to 86400 seconds
+      time_unit = "days" # Set the time unit to days
+      time_value = time / TIME_UNITS[2] # Set the time value to time divided by 86400
+
+   rounded_time = round(time_value, 2) # Round the time value to two decimal places
+   print(f"{BackgroundColors.GREEN}{output_string}{BackgroundColors.CYAN}{rounded_time} {time_unit}{BackgroundColors.GREEN}.{Style.RESET_ALL}")
+
 def main(repo_urls=None, github_token=None, finish_sound=False):
    """
    Main function.
@@ -459,6 +488,8 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
    :param finish_sound: bool - Optional flag to play a sound when the program finishes.
    :return: None
    """
+
+   start_time = time.time() # Start the timer 
 
    print(f"{BackgroundColors.GREEN}Welcome to the {BackgroundColors.CYAN}AutoMetric{BackgroundColors.GREEN} program!{Style.RESET_ALL}") # Output the welcome message
    print(f"{BackgroundColors.GREEN}This project process the following metrics: {BackgroundColors.CYAN}Number of Contributors, Mean Time to Update (MTTU), Mean Time to Commit (MTTC), Branch Protection, and Inactive Period{BackgroundColors.GREEN} for GitHub and GitLab repositories.{Style.RESET_ALL}") # Output the metrics message
@@ -483,6 +514,7 @@ def main(repo_urls=None, github_token=None, finish_sound=False):
    create_directory(get_full_directory_path(OUTPUT_DIR)) # Create the output directory
    write_output(metrics, output_file_path) # Write the output to a file
 
+   output_time(f"\n{BackgroundColors.GREEN}Total execution time: ", (time.time() - start_time)) # Output the total execution time
    print(f"{BackgroundColors.GREEN}\nProgram finished.{Style.RESET_ALL}") # Output the end of the program message
 
    atexit.register(play_sound) if finish_sound else None # Register the function to play a sound when the program finishes
