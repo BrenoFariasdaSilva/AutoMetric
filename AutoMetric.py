@@ -4,6 +4,7 @@ import gitlab # Import the gitlab module
 import json # Import the json module
 import os # For running a command in the terminal
 import platform # For getting the operating system name
+import requests # Import the requests module
 import sys # Import the sys module
 import time # Import the time module
 from colorama import Style # For coloring the terminal
@@ -164,22 +165,110 @@ def convert_days_to_appropriate_time(days):
 
    return ", ".join(time_components) # Join all time components for final output
 
-def calculate_mttu_github(repo, now):
+def get_github_repo_data(owner, repo, token):
    """
-   Calculate the Mean Time to Update (MTTU).
-   
-   :param repo: GitHub repository object
-   :param now: Current date and time
-   :return: Mean Time to Update (MTTU)
+   Fetch releases and tags from a GitHub repository using the GitHub API with authentication.
+
+   :param owner: The owner of the repository.
+   :param repo: The name of the repository.
+   :param token: The GitHub token for authentication.
    """
 
-   releases = repo.get_releases() # Get the releases
-   if releases.totalCount > 0: # If there are releases
-      first_release = releases.get_page(releases.totalCount // 30)[-1] # Get the first release
-      days_since_first_release = (now - first_release.created_at).days # Calculate the days since the first release
-      mttu = days_since_first_release / releases.totalCount # Calculate the mean time to update
-      return convert_days_to_appropriate_time(mttu) if FORMAT_METRICS else mttu # Return the mean time to update
-   return "n/a" # Set the mean time to update to "n/a"
+   api_url = f"https://api.github.com/repos/{owner}/{repo}" # GitHub API base URL
+
+   headers = {"Authorization": f"token {token}"} # Set the Authorization header
+
+   releases = requests.get(f"{api_url}/releases", headers=headers).json() # Get releases
+   tags = requests.get(f"{api_url}/tags", headers=headers).json() # Get tags
+
+   return releases, tags # Return releases and tags
+
+def parse_dates_from_releases(releases):
+   """
+   Extract the published_at dates from releases.
+
+   :param releases: List of releases.
+   :return: List of datetime objects.
+   """
+
+   dates = [] # Initialize the dates list
+   for release in releases: # Iterate over the releases
+      if "published_at" in release and release["published_at"]: # If "published_at" exists in the release
+         dates.append(datetime.strptime(release["published_at"], "%Y-%m-%dT%H:%M:%SZ")) # Append the date to the dates list
+   return dates # Return the dates list
+
+def parse_dates_from_tags(tags, owner, repo, token):
+   """
+   Extract the commit dates from the tags.
+
+   :param tags: List of tags.
+   :param owner: The owner of the repository.
+   :param repo: The name of the repository.
+   :param token: The GitHub token for authentication.
+   :return: List of datetime objects.
+   """
+
+   dates = [] # Initialize the dates list
+   api_url = f"https://api.github.com/repos/{owner}/{repo}" # GitHub API base URL
+   headers = {"Authorization": f"token {token}"} # Set the Authorization header
+   
+   for tag in tags: # Iterate over the tags
+      commit_url = f"{api_url}/git/refs/tags/{tag['name']}" # Get the commit URL
+      tag_data = requests.get(commit_url, headers=headers).json() # Get the tag data
+
+      if tag_data["object"]["type"] == "tag": # Verify if the tag is annotated
+         annotated_tag_url = tag_data["object"]["url"] # Get the annotated tag URL
+         annotated_tag_data = requests.get(annotated_tag_url, headers=headers).json() # Get the annotated tag data
+         commit_sha = annotated_tag_data["object"]["sha"] # Get the commit SHA
+      else: # If the tag is not annotated
+         commit_sha = tag_data["object"]["sha"] # Get the commit SHA
+
+      commit_data = requests.get(f"{api_url}/commits/{commit_sha}", headers=headers).json() # Get the commit details using the commit SHA
+
+      if "commit" in commit_data and "committer" in commit_data["commit"]: # If "commit" and "committer" exist in the commit_data
+         commit_date = commit_data["commit"]["committer"]["date"] # Get the commit date
+         dates.append(datetime.strptime(commit_date, "%Y-%m-%dT%H:%M:%SZ")) # Append the date to the dates list
+      else: # If "commit" and "committer" do not exist in the commit_data
+         print(f"{BackgroundColors.YELLOW}The commit data for tag {BackgroundColors.GREEN}{tag['name']}{BackgroundColors.RED} is not available.{Style.RESET_ALL}") # Output the error message
+   
+   return dates # Return the dates list
+
+def calculate_mttu_from_dates(dates):
+   """
+   Calculate the Mean Time to Update (MTTU) given a list of datetime objects.
+
+   :param dates: List of datetime objects.
+   :return: Mean Time to Update (MTTU).
+   """
+
+   if len(dates) < 2: # If there are less than 2 dates
+      return "n/a" # Return "n/a"
+
+   dates.sort() # Sort dates in ascending order
+   time_diffs = [(dates[i] - dates[i-1]).days for i in range(1, len(dates))] # Calculate time differences between successive dates
+   mttu = sum(time_diffs) / len(time_diffs) # Calculate average time difference
+
+   return mttu # Return the Mean Time to Update (MTTU)
+
+def calculate_mttu_github(owner, repo, token):
+   """
+   Main function to calculate MTTU for a GitHub repository.
+
+   :param owner: The owner of the repository.
+   :param repo: The name of the repository.
+   :param token: The GitHub token for authentication.
+   :return: Mean Time to Update (MTTU).
+   """
+
+   releases, tags = get_github_repo_data(owner, repo, token) # Get releases and tags
+   release_dates = parse_dates_from_releases(releases) # Parse dates from releases
+
+   if release_dates: # If there are releases
+      return convert_days_to_appropriate_time(calculate_mttu_from_dates(release_dates)) # Calculate MTTU based on releases
+   elif tags: # If no releases
+      tag_dates = parse_dates_from_tags(tags, owner, repo, token) # Parse dates from tags
+      if tag_dates: # If there are tags
+         return convert_days_to_appropriate_time(calculate_mttu_from_dates(tag_dates)) # Calculate MTTU based on tags
 
 def calculate_mttc_github(repo, now):
    """
@@ -249,7 +338,7 @@ def process_github_repository(repo_path, github_token):
       now = datetime.now(timezone.utc) # Get the current date and time
 
       nc = get_number_of_contributors_github(repo) # Number of contributors (NC)
-      mttu = calculate_mttu_github(repo, now) # Mean Time to Update (MTTU)
+      mttu = calculate_mttu_github(repo_path.split("/")[0], repo_path.split("/")[1], github_token) # Mean Time to Update (MTTU)
       mttc = calculate_mttc_github(repo, now) # Mean Time to Commit (MTTC)
       branch_protection = get_branch_protection_github(repo) # Branch protection (BP)
       ip = get_inactive_period_github(repo, now) # Inactive Period (IP)
