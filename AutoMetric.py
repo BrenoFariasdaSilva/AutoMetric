@@ -192,11 +192,18 @@ def calculate_mttc_github(repo, now):
 
    commits = repo.get_commits() # Get the commits
    if commits.totalCount > 0: # If there are commits
-      first_commit = commits.get_page(commits.totalCount // 30)[-1] # Get the first commit
+      first_commit = None # Get the first commit by iterating backward through commits if needed
+      for commit in commits.reversed: # The reversed iterator retrieves the first commit
+         first_commit = commit # Set the first commit
+         break # We only need the first commit
+
+      if first_commit is None: # If there are no commits
+         return "n/a" # Set the mean time to commit to "n/a"
+
       days_since_first_commit = (now - first_commit.commit.author.date.replace(tzinfo=timezone.utc)).days # Calculate the days since the first commit
       mttc = days_since_first_commit / commits.totalCount # Calculate the mean time to commit
       return convert_days_to_appropriate_time(mttc) if FORMAT_METRICS else mttc # Return the mean time to commit
-   return "n/a" # Set the mean time to commit to "n/a"
+   return "n/a" # Set the mean time to commit to "n/a" if there are no commits
 
 def get_branch_protection_github(repo):
    """
