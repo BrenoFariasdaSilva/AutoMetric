@@ -144,7 +144,7 @@ function.js
 ctags
 function.go
 
-#i/o files
-input.txt
-output.json
-output/
+#I/O files
+*.txt
+*.csv
+*.json
